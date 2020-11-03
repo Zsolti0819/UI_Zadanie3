@@ -5,9 +5,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
-/**
- * Created by Riso on 4/2/2017.
- */
 public class Jedinec {
 
     // Konstanty
@@ -42,10 +39,6 @@ public class Jedinec {
         }
     }
 
-
-
-
-
     // Nahodny byte z itervalu <0,255>.
     // Toto cislo sa zmesti do 8-miestneho bytu.
     public int nahodnyByte() {
@@ -72,19 +65,6 @@ public class Jedinec {
     public void setPocetKrokov(int pocetKrokov) {
         this.pocetKrokov = pocetKrokov;
     }
-
-    //
-//    public void vypisJedinca(){
-//        for(int i=0; i<pocetBuniek; i++){
-//            System.out.println(pamat[i] & 0xFF);
-//        }
-//    }
-//
-//    public void vypisJedincaByte(){
-//        for(int i=0; i<pocetBuniek; i++){
-//            System.out.println(pamat[i]);
-//        }
-//    }
 
     public Jedinec klonujNovy(){
         Jedinec novy = new Jedinec();

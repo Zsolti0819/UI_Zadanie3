@@ -2,9 +2,6 @@ package Main;
 
 import java.util.*;
 
-/**
- * Created by Riso on 4/2/2017.
- */
 public class GenetickyAlgoritmus {
 
     // Konstanty
@@ -35,9 +32,6 @@ public class GenetickyAlgoritmus {
     public Jedinec proces(){
 
         // Vypisovanie fitness hodnot pre analyzu algoritmu
-//        System.out.println("PRIEMER;MAXIMUM;");
-
-
         int pocGeneracii = 0;
 
         while( pocGeneracii < maxPocetGeneracii) {
@@ -67,9 +61,6 @@ public class GenetickyAlgoritmus {
 
             priemerFitness /= pocetJedincov;
 
-            // Vypisovanie priemernej fitness hodnoty
-//             System.out.print(""+priemerFitness+";");
-
 
             // Ziskam maximalnu velkost fitness funkcie
             double maxFitness = jedinciFronta.peek().getFitness();
@@ -86,7 +77,6 @@ public class GenetickyAlgoritmus {
                     return novaPopulacia[i];
                 }
             }
-
 
             // Krizenie
             int pocetNovychPotomkov = (pocetJedincov / 10 ) * 9; // 90% novej populacie
@@ -119,8 +109,6 @@ public class GenetickyAlgoritmus {
                 novaPopulacia[i+pocElity] = krizenec;
             }
 
-
-
             // Selekcia rodicov pomocou metody turnaja
             // Nahodne sa vyberu 4 jedinci z populacie
             // a dvaja lokalni vitazi sa skrizia a vytvoria noveho potomka .
@@ -137,9 +125,6 @@ public class GenetickyAlgoritmus {
                 Jedinec krizenec = new Jedinec(rodic1, rodic2);
                 novaPopulacia[i+pocElity+pocetRulety] = krizenec;
             }
-
-
-
 
             // Mutacie - podla pravdepodobnosti sa zmutuje x percent celej polupulacie
             // Jedinec mutuje tak, ze sa jedna jeho bunka nahodne nahradi inou hodnotou.
@@ -161,17 +146,12 @@ public class GenetickyAlgoritmus {
 
     }
 
-
     private Jedinec suboj(Jedinec j1, Jedinec j2){
         if(j1.getFitness() >= j2.getFitness()){
             return j1;
         }
         return j2;
     }
-
-
-
-
 
 }
 

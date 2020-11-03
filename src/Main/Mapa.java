@@ -4,9 +4,6 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-/**
- * Created by Riso on 4/3/2017.
- */
 public class Mapa
 {
     // Hashujeme poklady pre rychlu kontrolu.

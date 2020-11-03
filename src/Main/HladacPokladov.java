@@ -2,9 +2,6 @@ package Main;
 
 import java.awt.*;
 
-/**
- * Created by Riso on 4/4/2017.
- */
 public class HladacPokladov {
 
     private Point start;
@@ -62,9 +59,6 @@ public class HladacPokladov {
         }
 
         return (Point)aktPozicia.clone();
-
-
-        //System.out.println("X > " + aktPozicia.x + ", Y >" + aktPozicia.y + ", POKLADY = " + pocPokladov);
 
     }
 

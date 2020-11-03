@@ -2,9 +2,6 @@ package Main;
 
 import java.awt.*;
 
-/**
- * Created by Riso on 4/2/2017.
- */
 public class VirtualnyStroj {
 
     // Konstanty
