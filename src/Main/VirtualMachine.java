@@ -1,7 +1,5 @@
 package Main;
 
-import java.awt.*;
-
 public class VirtualMachine {
 
     // Konstanty
@@ -81,7 +79,7 @@ public class VirtualMachine {
                 int move = cell % 4;
 
                 try {
-                    Point p = switch (move) {
+                    Position p = switch (move) {
                         case 0 -> treasureFinder.whereToMove("H");
                         case 1 -> treasureFinder.whereToMove("D");
                         case 2 -> treasureFinder.whereToMove("P");
@@ -93,7 +91,7 @@ public class VirtualMachine {
                         subject.addNewMove(p);
                     }
 
-                } catch (OutsideOfTheMapException m){
+                } catch (OutsideOfTheMapException | CloneNotSupportedException m){
                     break;
                 }
             }

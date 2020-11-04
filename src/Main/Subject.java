@@ -15,7 +15,7 @@ public class Subject {
     private int stepCount;
     private final Random rand = new Random();
     private int[] memory = new int[numberOfCells];
-    private final Queue<Point> moves = new LinkedList<>();
+    private final Queue<Position> moves = new LinkedList<>();
 
     public Subject(){
         for(int i = 0; i< numberOfCells; i++){
@@ -82,11 +82,11 @@ public class Subject {
         this.fitness = fitness;
     }
 
-    public void addNewMove(Point p){
+    public void addNewMove(Position p){
         moves.add(p);
     }
 
-    public Point removeFirstMove(){
+    public Position removeFirstMove(){
         return moves.remove();
     }
 

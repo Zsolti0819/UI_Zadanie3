@@ -8,8 +8,8 @@ public class Map
 {
     // Hashujeme poklady pre rychlu kontrolu.
 
-    private HashMap<String, Point> treasuresBackup;
-    private HashMap<String, Point> treasures;
+    private HashMap<String, Position> treasuresBackup;
+    private HashMap<String, Position> treasures;
     private final int treasureCount;
     private final int maxLength;
     private final int maxHeight;
@@ -28,12 +28,11 @@ public class Map
         this.treasuresBackup = new LinkedHashMap<>(treasureCount);
         for(int i = 0; i< treasureCount; i++){
             String[] numbers = doubles[i].split(",");
-            Point p = new Point(
-                    Integer.parseInt(numbers[0]),
-                    Integer.parseInt(numbers[1])
-            );
-            this.treasures.put(hashCode(p.x,p.y), p);
-            this.treasuresBackup.put(hashCode(p.x,p.y), p);
+            Position p = new Position();
+            p.setRow(Integer.parseInt(numbers[1]));
+            p.setCol(Integer.parseInt(numbers[0]));
+            this.treasures.put(hashCode(p.getCol(),p.getRow()), p);
+            this.treasuresBackup.put(hashCode(p.getCol(),p.getRow()), p);
         }
     }
 
@@ -55,7 +54,7 @@ public class Map
     }
 
     public void resetMap(){
-        treasures = (HashMap<String, Point>) treasuresBackup.clone();
+        treasures = (HashMap<String, Position>) treasuresBackup.clone();
     }
 
     // Vytvori unikatny string pre suradnice x a y.

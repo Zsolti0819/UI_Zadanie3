@@ -1,7 +1,5 @@
 package Main;
 
-import java.awt.*;
-
 public class FindSolution {
     void najdiRiesenie(int pocetPokladov, int mriezkaX, int mriezkaY, String suradnicePokladov, int startX, int startY, double mutaciaField) {
 
@@ -20,13 +18,13 @@ public class FindSolution {
         vm.spustiProgram(j);
 
         int pohyby = j.getMovesSize();
-        System.out.println("Zacina na X=" + h.getStart().x + " , Y=" + h.getStart().y + " \n");
+        System.out.println("Zacina na X=" + h.getStartX() + " , Y=" + h.getStartY() + " \n");
         for(int i=0; i<pohyby; i++){
-            Point p = j.removeFirstMove();
+            Position p = j.removeFirstMove();
             if(i != (pohyby-1)) {
-                System.out.println("hlada na X=" + p.x + " , Y=" + p.y + " \n");
+                System.out.println("hlada na X=" + p.getCol() + " , Y=" + p.getRow() + " \n");
             } else {
-                System.out.println("konci na X=" + p.x + " , Y=" + p.y + " \n");
+                System.out.println("konci na X=" + p.getCol() + " , Y=" + p.getRow() + " \n");
             }
         }
         System.out.println("fitness:"+j.getFitness());

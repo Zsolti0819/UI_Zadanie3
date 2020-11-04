@@ -1,11 +1,9 @@
 package Main;
 
-import java.awt.*;
-
 public class TreasureFinder {
 
-    private final Point start;
-    private final Point actualPosition = new Point();
+    private final Position start;
+    private final Position actualPosition = new Position();
     private int treasureCount;
     private int stepCount;
     private final Map map;
@@ -13,21 +11,23 @@ public class TreasureFinder {
 
     public TreasureFinder(int startX, int startY, Map map) {
         this.map = map;
-        start = new Point(startX, startY);
+        start = new Position();
+        start.setCol(startX);
+        start.setRow(startY);
         this.reset();
     }
-
 
     // Resetuje hladaca na zaciatocnu poziciu, resetuje pocet pokladov a vynuluje pocet krokov
     public void reset() {
         map.resetMap();
-        actualPosition.setLocation(start.x, start.y);
-        treasureCount = map.isTreasure(start.x, start.y) ? 1 : 0; // Ak uz stoji na poklade tak zarata 1 poklad;
+        actualPosition.setCol(start.getCol());
+        actualPosition.setRow(start.getRow());
+        treasureCount = map.isTreasure(start.getCol(), start.getRow()) ? 1 : 0; // Ak uz stoji na poklade tak zarata 1 poklad;
         stepCount = 0;
     }
 
     // Zaregistruje moveTo cez vypis vo virtualnom stroji a podla pismenka vyvola moveTo na suradnice.
-    public Point whereToMove(String pohyb) throws OutsideOfTheMapException {
+    public Position whereToMove(String pohyb) throws OutsideOfTheMapException, CloneNotSupportedException {
         return switch (pohyb) {
             case "P" -> moveTo(1, 0);
             case "H" -> moveTo(0, 1);
@@ -38,31 +38,30 @@ public class TreasureFinder {
     }
 
     // Aktualizuj poziciiu hladaca a vyhod vynimku ak siahne mimo mapy
-    private Point moveTo(int pohybX, int pohybY) throws OutsideOfTheMapException {
-        actualPosition.x += pohybX;
-        actualPosition.y += pohybY;
+    private Position moveTo(int pohybX, int pohybY) throws OutsideOfTheMapException, CloneNotSupportedException {
+        actualPosition.setCol(actualPosition.getCol()+pohybX);
+        actualPosition.setRow(actualPosition.getRow()+pohybY);
 
         // Ak sa ocitne mimo mapy vyhodi vynimku
-        if(! map.isOnTheMap(actualPosition.x, actualPosition.y)){
+        if(! map.isOnTheMap(actualPosition.getCol(), actualPosition.getRow())){
             throw new OutsideOfTheMapException("Hladac sa ocitol mimo mapy.");
         }
 
         stepCount++;
 
         // Zvysi pocet najdenych pokladov ak nasiel na novej pozicii poklad.
-        if(map.isTreasure(actualPosition.x, actualPosition.y)){
+        if(map.isTreasure(actualPosition.getCol(), actualPosition.getRow())){
             treasureCount++;
         }
-
-        return (Point) actualPosition.clone();
-
-
-         //System.out.println("X > " + aktPozicia.x + ", Y >" + aktPozicia.y + ", POKLADY = " + pocPokladov);
-
+        return (Position) actualPosition.clone();
     }
 
-    public Point getStart() {
-        return start;
+    public int getStartX() {
+        return start.getCol();
+    }
+
+    public int getStartY() {
+        return start.getRow();
     }
 
     public int getTreasuresFound() {
