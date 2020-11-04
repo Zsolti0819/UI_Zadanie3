@@ -16,8 +16,8 @@ public class TestujScenar {
             GenetickyAlgoritmus g = new GenetickyAlgoritmus(mapa, h, mutaciaField);
             // Vypisanie riesenia
             Subject j = g.proces();
-            priemerPocetKrokov += j.getPocetKrokov();
-            priemerPoklady += j.getPocetNajdenychPokladov();
+            priemerPocetKrokov += j.getStepsCount();
+            priemerPoklady += j.getTreasuresFound();
         }
 
         priemerPocetKrokov /= 100;

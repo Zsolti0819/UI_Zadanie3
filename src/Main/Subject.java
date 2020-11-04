@@ -7,18 +7,18 @@ import java.util.Random;
 public class Subject {
 
     // Konstanty
-    public static final int pocetBuniek = 64;
+    public static final int numberOfCells = 64;
 
     private int fitness;
-    private int pocetNajdenychPokladov;
-    private int pocetKrokov;
+    private int treasuresFound;
+    private int stepsCount;
     private final Random rand = new Random();
-    private int[] pamat = new int[pocetBuniek];
-    private final Queue<Pozicia> pohyby = new LinkedList<>();
+    private int[] memory = new int[numberOfCells];
+    private final Queue<Pozicia> moves = new LinkedList<>();
 
     public Subject(){
-        for(int i= 0;i<pocetBuniek; i++){
-            pamat[i] = nahodnyByte();
+        for(int i = 0; i< numberOfCells; i++){
+            memory[i] = randomByte();
         }
     }
 
@@ -27,49 +27,49 @@ public class Subject {
     public Subject(Subject rodic1, Subject rodic2){
 
         // Dedenie ... nahodne sa zvoli cislo (bod) krizenia, podla ktoreho sa cast zdedi od jedneho rodica a druha od druheho
-        int bodKrizenia = rand.nextInt(pocetBuniek);
-        System.arraycopy(rodic1.pamat, 0, pamat, 0, bodKrizenia);
-        System.arraycopy(rodic2.pamat, bodKrizenia, pamat, bodKrizenia, pocetBuniek - bodKrizenia);
+        int bodKrizenia = rand.nextInt(numberOfCells);
+        System.arraycopy(rodic1.memory, 0, memory, 0, bodKrizenia);
+        System.arraycopy(rodic2.memory, bodKrizenia, memory, bodKrizenia, numberOfCells - bodKrizenia);
     }
 
     // Nahodny byte z itervalu <0,255>.
     // Toto cislo sa zmesti do 8-miestneho bytu.
-    public int nahodnyByte() {
+    public int randomByte() {
         return rand.nextInt(256);
     }
 
-    public void mutuj(){
-        this.pamat[rand.nextInt(pocetBuniek)] =  rand.nextInt(256); // max je 1111 1111 a min 0000 0000
+    public void mutate(){
+        this.memory[rand.nextInt(numberOfCells)] =  rand.nextInt(256); // max je 1111 1111 a min 0000 0000
     }
 
-    public int getPocetNajdenychPokladov() {
-        return pocetNajdenychPokladov;
+    public int getTreasuresFound() {
+        return treasuresFound;
     }
 
-    public void setPocetNajdenychPokladov(int pocetNajdenychPokladov) {
-        this.pocetNajdenychPokladov = pocetNajdenychPokladov;
+    public void setTreasuresFound(int treasuresFound) {
+        this.treasuresFound = treasuresFound;
     }
 
-    public int getPocetKrokov() {
-        return pocetKrokov;
+    public int getStepsCount() {
+        return stepsCount;
     }
 
-    public void setPocetKrokov(int pocetKrokov) {
-        this.pocetKrokov = pocetKrokov;
+    public void setStepsCount(int stepsCount) {
+        this.stepsCount = stepsCount;
     }
 
-    public Subject klonujNovy(){
-        Subject novy = new Subject();
-        novy.pamat = this.pamat.clone();
-        return novy;
+    public Subject cloneNew(){
+        Subject newSubject = new Subject();
+        newSubject.memory = this.memory.clone();
+        return newSubject;
     }
 
     public int getBunka(int i){
-        return pamat[i];
+        return memory[i];
     }
 
     public void setBunka(int poz, int b){
-        pamat[poz] = b;
+        memory[poz] = b;
     }
 
     public int getFitness() {
@@ -81,14 +81,14 @@ public class Subject {
     }
 
     public void pridajNovyPohyb(Pozicia p){
-        pohyby.add(p);
+        moves.add(p);
     }
 
     public Pozicia vyberPrvyPohyb(){
-        return pohyby.remove();
+        return moves.remove();
     }
 
     public int getPohybySize() {
-        return pohyby.size();
+        return moves.size();
     }
 }

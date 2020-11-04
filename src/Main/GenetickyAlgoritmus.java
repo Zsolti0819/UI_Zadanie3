@@ -41,7 +41,7 @@ public class GenetickyAlgoritmus {
             // Ohodnot populaciu pomoou virtualneho stroja a zapis hodnoty fitness
             for(int i=0; i<pocetJedincov; i++){
                 virtualMachine.run(populacia[i]);
-                pocetPokladovGeneracii = Math.max(pocetPokladovGeneracii, populacia[i].getPocetNajdenychPokladov());
+                pocetPokladovGeneracii = Math.max(pocetPokladovGeneracii, populacia[i].getTreasuresFound());
             }
 
             // Vytvorime novu generaciu, ktorou nahradime po krizeni a mutaciach tu povodnu
@@ -125,7 +125,7 @@ public class GenetickyAlgoritmus {
                 // Pravdepobnost medzi 0.0 az 1.0, ktore vracia newxtDouble()
                 double pravd = rand.nextDouble();
                 if(pravd <= pravdMutacie){
-                    novaPopulacia[i].mutuj();
+                    novaPopulacia[i].mutate();
                 }
             }
 

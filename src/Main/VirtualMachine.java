@@ -23,7 +23,7 @@ public class VirtualMachine {
 
         // Klonuj jedinca aby sa zachoval povodny program v jedincovi,
         // kedze virtualny stroj prepisuje hodnoty v bunkach
-        Subject vmSubject = subject.klonujNovy();
+        Subject vmSubject = subject.cloneNew();
 
 
         // Resutujeme hladaca pokladov
@@ -46,7 +46,7 @@ public class VirtualMachine {
             int akt = vmSubject.getBunka(dalsia);
 
             // Nastavime dalsiu bunku a ak dosiahne maxPocetBuniek tak prejde 0 vdaka modulu
-            dalsia = ++dalsia % Subject.pocetBuniek;
+            dalsia = ++dalsia % Subject.numberOfCells;
 
             // Ziskaj operaciu a cislo bunky
             int operacia = akt & 192;       // 192 => 1100 0000
@@ -109,8 +109,8 @@ public class VirtualMachine {
 
         int fitness = hladacPokladov.getPocNajdenychPokladov()*1000 - hladacPokladov.getPocKrokov();
         subject.setFitness(fitness);
-        subject.setPocetNajdenychPokladov(hladacPokladov.getPocNajdenychPokladov());
-        subject.setPocetKrokov(hladacPokladov.getPocKrokov());
+        subject.setTreasuresFound(hladacPokladov.getPocNajdenychPokladov());
+        subject.setStepsCount(hladacPokladov.getPocKrokov());
 
     }
 

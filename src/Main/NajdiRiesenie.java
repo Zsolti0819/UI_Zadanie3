@@ -30,8 +30,8 @@ public class NajdiRiesenie {
         }
 
         System.out.println("fitness:"+j.getFitness());
-        System.out.println("poklady:"+j.getPocetNajdenychPokladov());
-        System.out.println("krokov:"+j.getPocetKrokov());
+        System.out.println("poklady:"+j.getTreasuresFound());
+        System.out.println("krokov:"+j.getStepsCount());
 
 
 
