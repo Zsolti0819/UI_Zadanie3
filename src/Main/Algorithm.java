@@ -74,7 +74,6 @@ public class Algorithm {
 
             Random rand = new Random();
 
-
             // Selekcia rodicov pomocou metody rulety
 
             List<Subject> ruleta = new LinkedList<>();
@@ -101,7 +100,6 @@ public class Algorithm {
             }
 
 
-
             // Selekcia rodicov pomocou metody turnaja
             // Nahodne sa vyberu 4 jedinci z populacie
             // a dvaja lokalni vitazi sa skrizia a vytvoria noveho potomka .
@@ -118,8 +116,6 @@ public class Algorithm {
                 Subject krizenec = new Subject(rodic1, rodic2);
                 novaPopulacia[i+pocElity+pocetRulety] = krizenec;
             }
-
-
 
 
             // Mutacie - podla pravdepodobnosti sa zmutuje x percent celej polupulacie
