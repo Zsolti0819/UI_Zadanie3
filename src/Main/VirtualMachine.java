@@ -25,7 +25,6 @@ public class VirtualMachine {
         // kedze virtualny stroj prepisuje hodnoty v bunkach
         Subject vmSubject = subject.cloneNew();
 
-
         // Resutujeme hladaca pokladov
         hladacPokladov.reset();
 

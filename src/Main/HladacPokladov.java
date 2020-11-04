@@ -5,8 +5,6 @@ import java.awt.*;
 public class HladacPokladov {
 
     private final Pozicia start;
-
-    // private final Point start;
     private final Pozicia aktPozicia = new Pozicia();
     private int pocPokladov;
     private int pocKrokov;
