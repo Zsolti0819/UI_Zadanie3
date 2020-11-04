@@ -1,5 +1,6 @@
 package Main;
 
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -11,10 +12,10 @@ public class Subject {
 
     private int fitness;
     private int treasuresFound;
-    private int stepsCount;
+    private int stepCount;
     private final Random rand = new Random();
     private int[] memory = new int[numberOfCells];
-    private final Queue<Pozicia> moves = new LinkedList<>();
+    private final Queue<Point> moves = new LinkedList<>();
 
     public Subject(){
         for(int i = 0; i< numberOfCells; i++){
@@ -24,13 +25,14 @@ public class Subject {
 
     // Krizenie
     // Novu jedinec, ktory vznikne krizenim rodicov 1 a 2
-    public Subject(Subject rodic1, Subject rodic2){
+    public Subject(Subject parent1, Subject parent2){
 
         // Dedenie ... nahodne sa zvoli cislo (bod) krizenia, podla ktoreho sa cast zdedi od jedneho rodica a druha od druheho
-        int bodKrizenia = rand.nextInt(numberOfCells);
-        System.arraycopy(rodic1.memory, 0, memory, 0, bodKrizenia);
-        System.arraycopy(rodic2.memory, bodKrizenia, memory, bodKrizenia, numberOfCells - bodKrizenia);
+        int crossingPoint = rand.nextInt(numberOfCells);
+        System.arraycopy(parent1.memory, 0, memory, 0, crossingPoint);
+        System.arraycopy(parent2.memory, crossingPoint, memory, crossingPoint, numberOfCells - crossingPoint);
     }
+
 
     // Nahodny byte z itervalu <0,255>.
     // Toto cislo sa zmesti do 8-miestneho bytu.
@@ -50,12 +52,12 @@ public class Subject {
         this.treasuresFound = treasuresFound;
     }
 
-    public int getStepsCount() {
-        return stepsCount;
+    public int getStepCount() {
+        return stepCount;
     }
 
-    public void setStepsCount(int stepsCount) {
-        this.stepsCount = stepsCount;
+    public void setStepCount(int stepCount) {
+        this.stepCount = stepCount;
     }
 
     public Subject cloneNew(){
@@ -64,11 +66,11 @@ public class Subject {
         return newSubject;
     }
 
-    public int getBunka(int i){
+    public int getCell(int i){
         return memory[i];
     }
 
-    public void setBunka(int poz, int b){
+    public void setCell(int poz, int b){
         memory[poz] = b;
     }
 
@@ -80,15 +82,15 @@ public class Subject {
         this.fitness = fitness;
     }
 
-    public void pridajNovyPohyb(Pozicia p){
+    public void addNewMove(Point p){
         moves.add(p);
     }
 
-    public Pozicia vyberPrvyPohyb(){
+    public Point removeFirstMove(){
         return moves.remove();
     }
 
-    public int getPohybySize() {
+    public int getMovesSize() {
         return moves.size();
     }
 }

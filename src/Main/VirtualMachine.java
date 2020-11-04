@@ -1,101 +1,105 @@
 package Main;
 
+import java.awt.*;
+
 public class VirtualMachine {
 
     // Konstanty
-    public static final int maxPocetIntrukcii = 500;
+    public static final int maxInstructionCount = 500;
 
-    private final Mapa mapa;
-    private final HladacPokladov hladacPokladov;
-    private boolean vypisRiesenie = false;
+    private final Map map;
+    private final TreasureFinder treasureFinder;
 
-    public VirtualMachine(Mapa mapa, HladacPokladov hladacPokladov) {
-        this.mapa = mapa;
-        this.hladacPokladov = hladacPokladov;
+    // Operacie VM a byte hodnoty
+
+    private boolean printoutSolution = false;
+
+    public VirtualMachine(Map map, TreasureFinder treasureFinder) {
+        this.map = map;
+        this.treasureFinder = treasureFinder;
     }
 
-    public void run(Subject subject) {
-        // Operacie VM a byte hodnoty
+    public void spustiProgram(Subject subject) {
         int inc =  0;     // 00XX XXXX
         int dec =  64;    // 01XX XXXX
         int jump = 128;     // 10XX XXXX
-        int printout =  192;    // 11XX XXXX
 
         // Klonuj jedinca aby sa zachoval povodny program v jedincovi,
         // kedze virtualny stroj prepisuje hodnoty v bunkach
         Subject vmSubject = subject.cloneNew();
 
-        // Resutujeme hladaca pokladov
-        hladacPokladov.reset();
 
-        int pocInstr = 0;
+        // Resutujeme hladaca pokladov
+        treasureFinder.reset();
+
+        int instructionCount = 0;
 
         // Index bunky jedinca, ktora sa nacita v dalsej iteraci
-        int dalsia = 0;
+        int next = 0;
 
         // Prebiehaju instrukcie pokial :
         // 1. zbehne 500 instrukcii
         // 2. najdeme vsetky poklady
         // 3. sa ocitneme mimo mapy
-        while (pocInstr < maxPocetIntrukcii) {
+        while (instructionCount < maxInstructionCount) {
 
-            pocInstr++;
+            instructionCount++;
 
             // Nacitamm dalsiu bunku jedinca
-            int akt = vmSubject.getBunka(dalsia);
+            int buff = vmSubject.getCell(next);
 
             // Nastavime dalsiu bunku a ak dosiahne maxPocetBuniek tak prejde 0 vdaka modulu
-            dalsia = ++dalsia % Subject.numberOfCells;
+            next = ++next % Subject.numberOfCells;
 
             // Ziskaj operaciu a cislo bunky
-            int operacia = akt & 192;       // 192 => 1100 0000
-            int cisloBunky = akt & 63;      // 63  => 0011 1111
+            int operation = buff & 192;       // 192 => 1100 0000
+            int value = buff & 63;      // 63  => 0011 1111
 
             // Vypis
-            if (operacia == inc) {
+            if (operation == inc) {
                 // Ziska hodnotu pozadovanej bunky jedinca, inkrementuje a zmeni v jedincovi
-                int bunka = vmSubject.getBunka(cisloBunky);
-                bunka = ++bunka % 256; // ak inkrementujeme 1111 1111 tak dostaneme 0000 0000
-                vmSubject.setBunka(cisloBunky, bunka);
+                int cell = vmSubject.getCell(value);
+                cell = ++cell % 256; // ak inkrementujeme 1111 1111 tak dostaneme 0000 0000
+                vmSubject.setCell(value, cell);
 
-            } else if (operacia == dec) {
+            } else if (operation == dec) {
 
                 // Ziska hodnotu pozadovanej bunky jedinca, dekrementuje a zmeni v jedincovi
-                int bunka = vmSubject.getBunka(cisloBunky);
-                bunka = --bunka % 256; // Ak dekrementujem 0000 0000 dostanem 1111 1111
-                vmSubject.setBunka(cisloBunky, bunka);
+                int cell = vmSubject.getCell(value);
+                cell = --cell % 256; // Ak dekrementujem 0000 0000 dostanem 1111 1111
+                vmSubject.setCell(value, cell);
 
-            } else if (operacia == jump) {
+            } else if (operation == jump) {
 
                 // V dalsom kroku programu sa nacita vybrana bunka
-                dalsia = cisloBunky;
+                next = value;
 
-            } else if (operacia == printout) {
+            } else {
 
                 // Ziska hodnotu pozadovanej bunky jedinca
-                int bunka = vmSubject.getBunka(cisloBunky);
-                int pohyb = bunka % 4;
+                int cell = vmSubject.getCell(value);
+                int move = cell % 4;
 
                 try {
-                    Pozicia p = switch (pohyb) {
-                        case 0 -> hladacPokladov.vykonajPohyb("H");
-                        case 1 -> hladacPokladov.vykonajPohyb("D");
-                        case 2 -> hladacPokladov.vykonajPohyb("P");
-                        case 3 -> hladacPokladov.vykonajPohyb("L");
+                    Point p = switch (move) {
+                        case 0 -> treasureFinder.whereToMove("H");
+                        case 1 -> treasureFinder.whereToMove("D");
+                        case 2 -> treasureFinder.whereToMove("P");
+                        case 3 -> treasureFinder.whereToMove("L");
                         default -> null;
                     };
 
-                    if(this.vypisRiesenie){
-                        subject.pridajNovyPohyb(p);
+                    if(this.printoutSolution){
+                        subject.addNewMove(p);
                     }
 
-                } catch (MimoMapyException m){
+                } catch (OutsideOfTheMapException m){
                     break;
                 }
             }
 
             // Over ci nasiel vsetky poklady
-            if(hladacPokladov.getPocNajdenychPokladov() == mapa.getPocetPokladov()){
+            if(treasureFinder.getTreasuresFound() == map.getTreasureCount()){
                 break;
             }
 
@@ -106,14 +110,14 @@ public class VirtualMachine {
         // Preto bude mat riesenie s rovnakym poctom najdenych pokladov a
 
 
-        int fitness = hladacPokladov.getPocNajdenychPokladov()*1000 - hladacPokladov.getPocKrokov();
+        int fitness = treasureFinder.getTreasuresFound()*1000 - treasureFinder.getStepCount();
         subject.setFitness(fitness);
-        subject.setTreasuresFound(hladacPokladov.getPocNajdenychPokladov());
-        subject.setStepsCount(hladacPokladov.getPocKrokov());
+        subject.setTreasuresFound(treasureFinder.getTreasuresFound());
+        subject.setStepCount(treasureFinder.getStepCount());
 
     }
 
-    public void setVypisRiesenie(boolean vypisRiesenie) {
-        this.vypisRiesenie = vypisRiesenie;
+    public void setPrintoutSolution(boolean printoutSolution) {
+        this.printoutSolution = printoutSolution;
     }
 }

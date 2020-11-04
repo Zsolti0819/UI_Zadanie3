@@ -1,22 +1,22 @@
 package Main;
 
-public class TestujScenar {
+public class TestScenario {
     void testujScenar(int pocetPokladov, int mriezkaX, int mriezkaY, String suradnicePokladov, int startX, int startY, double mutaciaField) {
 
-        Mapa mapa = new Mapa(pocetPokladov, mriezkaX, mriezkaY);
+        Map map = new Map(pocetPokladov, mriezkaX, mriezkaY);
 
-        mapa.parsujPoklady(suradnicePokladov);
+        map.parseTreasures(suradnicePokladov);
 
-        HladacPokladov h = new HladacPokladov(startX, startY, mapa);
+        TreasureFinder h = new TreasureFinder(startX, startY, map);
 
         double priemerPoklady = 0;
         double priemerPocetKrokov = 0;
 
         for(int i=0; i<100; i++) {
-            GenetickyAlgoritmus g = new GenetickyAlgoritmus(mapa, h, mutaciaField);
+            Algorithm g = new Algorithm(map, h, mutaciaField);
             // Vypisanie riesenia
             Subject j = g.proces();
-            priemerPocetKrokov += j.getStepsCount();
+            priemerPocetKrokov += j.getStepCount();
             priemerPoklady += j.getTreasuresFound();
         }
 
