@@ -1,11 +1,10 @@
 package Main;
 
-import java.awt.*;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
-public class Jedinec {
+public class Subject {
 
     // Konstanty
     public static final int pocetBuniek = 64;
@@ -13,37 +12,30 @@ public class Jedinec {
     private int fitness;
     private int pocetNajdenychPokladov;
     private int pocetKrokov;
-    private Random rand = new Random();
+    private final Random rand = new Random();
     private int[] pamat = new int[pocetBuniek];
-    private Queue<Point> pohyby = new LinkedList<>();
+    private final Queue<Pozicia> pohyby = new LinkedList<>();
 
-
-    public Jedinec(){
+    public Subject(){
         for(int i= 0;i<pocetBuniek; i++){
             pamat[i] = nahodnyByte();
         }
     }
 
-
     // Krizenie
     // Novu jedinec, ktory vznikne krizenim rodicov 1 a 2
-    public Jedinec(Jedinec rodic1, Jedinec rodic2){
+    public Subject(Subject rodic1, Subject rodic2){
 
         // Dedenie ... nahodne sa zvoli cislo (bod) krizenia, podla ktoreho sa cast zdedi od jedneho rodica a druha od druheho
         int bodKrizenia = rand.nextInt(pocetBuniek);
-        for(int i=0; i<bodKrizenia; i++){
-            pamat[i] = rodic1.pamat[i];
-        }
-        for(int i=bodKrizenia; i<pocetBuniek; i++){
-            pamat[i] = rodic2.pamat[i];
-        }
+        System.arraycopy(rodic1.pamat, 0, pamat, 0, bodKrizenia);
+        System.arraycopy(rodic2.pamat, bodKrizenia, pamat, bodKrizenia, pocetBuniek - bodKrizenia);
     }
 
     // Nahodny byte z itervalu <0,255>.
     // Toto cislo sa zmesti do 8-miestneho bytu.
     public int nahodnyByte() {
-        int r = rand.nextInt(256);
-        return r;
+        return rand.nextInt(256);
     }
 
     public void mutuj(){
@@ -66,8 +58,8 @@ public class Jedinec {
         this.pocetKrokov = pocetKrokov;
     }
 
-    public Jedinec klonujNovy(){
-        Jedinec novy = new Jedinec();
+    public Subject klonujNovy(){
+        Subject novy = new Subject();
         novy.pamat = this.pamat.clone();
         return novy;
     }
@@ -88,11 +80,11 @@ public class Jedinec {
         this.fitness = fitness;
     }
 
-    public void pridajNovyPohyb(Point p){
+    public void pridajNovyPohyb(Pozicia p){
         pohyby.add(p);
     }
 
-    public Point vyberPrvyPohyb(){
+    public Pozicia vyberPrvyPohyb(){
         return pohyby.remove();
     }
 

@@ -9,27 +9,25 @@ public class GenetickyAlgoritmus {
     public static final int maxPocetGeneracii = 500;
 
     // Premenne
-    private Jedinec[] populacia = new Jedinec[pocetJedincov];
-    private Mapa mapa;
-    private HladacPokladov hladacPokladov;
-    private VirtualnyStroj virtualnyStroj;
-    private double pravdMutacie; // Pravdepobost mutaci
+    private Subject[] populacia = new Subject[pocetJedincov];
+    private final Mapa mapa;
+    private final VirtualMachine virtualMachine;
+    private final double pravdMutacie; // Pravdepobost mutaci
 
 
     public GenetickyAlgoritmus(Mapa mapa, HladacPokladov hladacPokladov, double mutacie){
 
         this.mapa = mapa;
-        this.hladacPokladov = hladacPokladov;
-        this.virtualnyStroj = new VirtualnyStroj(mapa, hladacPokladov);
+        this.virtualMachine = new VirtualMachine(mapa, hladacPokladov);
         this.pravdMutacie = mutacie;
 
         // Vygeneruj pociatocnu populaciu
         for(int i=0; i<pocetJedincov; i++){
-            populacia[i] = new Jedinec();
+            populacia[i] = new Subject();
         }
     }
 
-    public Jedinec proces(){
+    public Subject proces(){
 
         // Vypisovanie fitness hodnot pre analyzu algoritmu
         int pocGeneracii = 0;
@@ -42,24 +40,18 @@ public class GenetickyAlgoritmus {
 
             // Ohodnot populaciu pomoou virtualneho stroja a zapis hodnoty fitness
             for(int i=0; i<pocetJedincov; i++){
-                virtualnyStroj.spustiProgram(populacia[i]);
+                virtualMachine.run(populacia[i]);
                 pocetPokladovGeneracii = Math.max(pocetPokladovGeneracii, populacia[i].getPocetNajdenychPokladov());
             }
 
             // Vytvorime novu generaciu, ktorou nahradime po krizeni a mutaciach tu povodnu
-            Jedinec[] novaPopulacia = new Jedinec[pocetJedincov];
+            Subject[] novaPopulacia = new Subject[pocetJedincov];
 
             // Vytvorim prioritny rad a vlozim vsetkych jedincov
             // Porovnam podla fitness hodnoty oboch jedincov
-            Comparator<Jedinec> cmprtr = new FitnessComparator();
-            PriorityQueue<Jedinec> jedinciFronta = new PriorityQueue<>(cmprtr);
-            double priemerFitness = 0;
-            for(int i = 0; i<pocetJedincov; i++){
-                priemerFitness += populacia[i].getFitness();
-                jedinciFronta.add(populacia[i]);
-            }
-
-            priemerFitness /= pocetJedincov;
+            Comparator<Subject> cmprtr = new FitnessComparator();
+            PriorityQueue<Subject> jedinciFronta = new PriorityQueue<>(cmprtr);
+            jedinciFronta.addAll(Arrays.asList(populacia).subList(0, pocetJedincov));
 
 
             // Ziskam maximalnu velkost fitness funkcie
@@ -86,13 +78,13 @@ public class GenetickyAlgoritmus {
 
             // Selekcia rodicov pomocou metody rulety
 
-            List<Jedinec> ruleta = new LinkedList<>();
+            List<Subject> ruleta = new LinkedList<>();
             int pocetRulety, pocetTurnaja;
             pocetRulety = pocetTurnaja = pocetNovychPotomkov / 2;
 
 
             for(int i=0; i<pocetRulety; i++){
-                Jedinec j = jedinciFronta.remove();
+                Subject j = jedinciFronta.remove();
                 double n = j.getFitness() / maxFitness;
                 int pocet = (int)(n * 100);
                 for(int k=0; k<pocet; k++){
@@ -102,10 +94,10 @@ public class GenetickyAlgoritmus {
 
             for(int i=0; i<pocetRulety  ; i++){
 
-                Jedinec j1 = ruleta.get(rand.nextInt(ruleta.size()));
-                Jedinec j2 = ruleta.get(rand.nextInt(ruleta.size()));
+                Subject j1 = ruleta.get(rand.nextInt(ruleta.size()));
+                Subject j2 = ruleta.get(rand.nextInt(ruleta.size()));
 
-                Jedinec krizenec = new Jedinec(j1, j2);
+                Subject krizenec = new Subject(j1, j2);
                 novaPopulacia[i+pocElity] = krizenec;
             }
 
@@ -114,20 +106,20 @@ public class GenetickyAlgoritmus {
             // a dvaja lokalni vitazi sa skrizia a vytvoria noveho potomka .
             for(int i=0; i<pocetTurnaja; i++){
 
-                Jedinec j1 = populacia[rand.nextInt(pocetJedincov)];
-                Jedinec j2 = populacia[rand.nextInt(pocetJedincov)];
-                Jedinec rodic1 = suboj(j1, j2);
+                Subject j1 = populacia[rand.nextInt(pocetJedincov)];
+                Subject j2 = populacia[rand.nextInt(pocetJedincov)];
+                Subject rodic1 = suboj(j1, j2);
 
-                Jedinec j3 = populacia[rand.nextInt(pocetJedincov)];
-                Jedinec j4 = populacia[rand.nextInt(pocetJedincov)];
-                Jedinec rodic2 = suboj(j3, j4);
+                Subject j3 = populacia[rand.nextInt(pocetJedincov)];
+                Subject j4 = populacia[rand.nextInt(pocetJedincov)];
+                Subject rodic2 = suboj(j3, j4);
 
-                Jedinec krizenec = new Jedinec(rodic1, rodic2);
+                Subject krizenec = new Subject(rodic1, rodic2);
                 novaPopulacia[i+pocElity+pocetRulety] = krizenec;
             }
 
             // Mutacie - podla pravdepodobnosti sa zmutuje x percent celej polupulacie
-            // Jedinec mutuje tak, ze sa jedna jeho bunka nahodne nahradi inou hodnotou.
+            // Subject mutuje tak, ze sa jedna jeho bunka nahodne nahradi inou hodnotou.
             for(int i = 0; i<pocetJedincov; i++){
 
                 // Pravdepobnost medzi 0.0 az 1.0, ktore vracia newxtDouble()
@@ -146,7 +138,7 @@ public class GenetickyAlgoritmus {
 
     }
 
-    private Jedinec suboj(Jedinec j1, Jedinec j2){
+    private Subject suboj(Subject j1, Subject j2){
         if(j1.getFitness() >= j2.getFitness()){
             return j1;
         }
@@ -157,16 +149,10 @@ public class GenetickyAlgoritmus {
 
 // Trieda definuje nové porovnávanie v prioritnej rade, podľa atribútu fitness
 // cim vacsia fitness, tým prvšia pozícia vo fronte
-class FitnessComparator implements Comparator<Jedinec> {
+class FitnessComparator implements Comparator<Subject> {
 
     @Override
-    public int compare(Jedinec o1, Jedinec o2) {
-        if(o1.getFitness() > o2.getFitness()){
-            return -1;
-        }
-        if(o1.getFitness() < o2.getFitness()){
-            return 1;
-        }
-        return 0;
+    public int compare(Subject o1, Subject o2) {
+        return Integer.compare(o2.getFitness(), o1.getFitness());
     }
 }
