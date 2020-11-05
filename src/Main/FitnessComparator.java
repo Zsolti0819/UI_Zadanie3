@@ -7,7 +7,7 @@ import java.util.Comparator;
 public class FitnessComparator implements Comparator<Subject> {
 
     @Override
-    public int compare(Subject o1, Subject o2) {
-        return Integer.compare(o2.getFitness(), o1.getFitness());
+    public int compare(Subject subject1, Subject subject2) {
+        return Integer.compare(subject2.getFitness(), subject1.getFitness());
     }
 }

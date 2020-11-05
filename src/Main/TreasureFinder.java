@@ -6,6 +6,7 @@ public class TreasureFinder {
     private final Position actualPosition = new Position();
     private int treasureCount;
     private int stepCount;
+    private int fails;
     private final Map map;
 
     public TreasureFinder(int startX, int startY, Map map) {
@@ -23,10 +24,11 @@ public class TreasureFinder {
         actualPosition.setRow(start.getRow());
         treasureCount = map.isTreasure(start.getCol(), start.getRow()) ? 1 : 0; // Ak uz stoji na poklade tak zarata 1 poklad;
         stepCount = 0;
+        fails = 0;
     }
 
     // Funkciu používam v triede VirtualMachine, kde podľa posledných 2 bitov rozhodneme, kam chceme ísť
-    public Position whereToMove(String pohyb) throws OutsideOfTheMapException, CloneNotSupportedException {
+    public Position whereToMove(String pohyb) throws CloneNotSupportedException {
         return switch (pohyb) {
             case "P" -> moveTo(1, 0);
             case "H" -> moveTo(0, 1);
@@ -37,20 +39,19 @@ public class TreasureFinder {
     }
 
     // Aktualizuj poziciiu hladaca a vyhod vynimku ak siahne mimo mapy
-    private Position moveTo(int pohybX, int pohybY) throws OutsideOfTheMapException, CloneNotSupportedException {
+    private Position moveTo(int pohybX, int pohybY) throws CloneNotSupportedException {
         actualPosition.setCol(actualPosition.getCol()+pohybX);
         actualPosition.setRow(actualPosition.getRow()+pohybY);
 
         // Ak sa ocitne mimo mapy vyhodi vynimku
-        if(! map.isOnTheMap(actualPosition.getCol(), actualPosition.getRow())){
-            throw new OutsideOfTheMapException("Hladac sa ocitol mimo mapy.");
+        if(! map.isOnTheMap(actualPosition.getCol(), actualPosition.getRow())) {
+            fails++;
         }
 
         stepCount++;
 
         // Zvysi pocet najdenych pokladov ak nasiel na novej pozicii poklad.
         if(map.isTreasure(actualPosition.getCol(), actualPosition.getRow())) {
-            // System.out.println("Hladac pokladov nasiel poklad na pozicii "+actualPosition.getCol()+","+actualPosition.getRow());
             treasureCount++;
         }
         return (Position) actualPosition.clone();
@@ -70,6 +71,14 @@ public class TreasureFinder {
 
     public int getStepCount() {
         return stepCount;
+    }
+
+    public int getFails() {
+        return fails;
+    }
+
+    public void setFails(int fails) {
+        this.fails = fails;
     }
 }
 

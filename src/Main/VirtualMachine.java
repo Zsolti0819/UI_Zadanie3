@@ -7,7 +7,6 @@ public class VirtualMachine {
 
     private final Map map;
     private final TreasureFinder treasureFinder;
-
     private boolean printoutSolution = false;
 
     public VirtualMachine(Map map, TreasureFinder treasureFinder) {
@@ -15,19 +14,19 @@ public class VirtualMachine {
         this.treasureFinder = treasureFinder;
     }
 
-    public void run (Subject subject) {
+    public void run (Subject subject) throws CloneNotSupportedException {
+
+        int instructionCount;
         int inc =  0;     // 00XX XXXX
         int dec =  64;    // 01XX XXXX
         int jump = 128;     // 10XX XXXX
         // Pre výpis netreba deklarovať hodnotu, lebo ak hodnotu bunky násobíme s 11XX XXXX tak to nezmení nič
 
-        // Klonujem subject, aby sa zachoval povodny, kvoli VM prepisuje hodnoty
+        // Klonujem subject, aby sa zachoval pôvodny, kvôli VM prepisuje hodnoty
         Subject vmSubject = subject.cloneNew();
 
         // Resetujem treasurefinder
         treasureFinder.reset();
-
-        int instructionCount = 0;
 
         // Index bunky jedinca, ktora sa nacita v dalsej iteraci
         int next = 0;
@@ -72,7 +71,7 @@ public class VirtualMachine {
                 int cell = vmSubject.getCell(value);
                 int move = cell % 4;
 
-                try {
+
                     Position p = switch (move) {
                         case 0 -> treasureFinder.whereToMove("H");
                         case 1 -> treasureFinder.whereToMove("D");
@@ -85,13 +84,11 @@ public class VirtualMachine {
                         subject.addNewMove(p);
                     }
 
-                } catch (OutsideOfTheMapException | CloneNotSupportedException m){
-                    break;
                 }
-            }
+
 
             // Over ci nasiel vsetky poklady
-            if(treasureFinder.getTreasuresFound() == map.getTreasureCount()){
+            if(treasureFinder.getTreasuresFound() == map.getTreasureCount()) {
                 break;
             }
 
@@ -105,7 +102,6 @@ public class VirtualMachine {
         subject.setFitness(fitness);
         subject.setTreasuresFound(treasureFinder.getTreasuresFound());
         subject.setStepCount(treasureFinder.getStepCount());
-
     }
 
     public void setPrintoutSolution(boolean printoutSolution) {

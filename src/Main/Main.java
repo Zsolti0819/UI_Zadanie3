@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException, CloneNotSupportedException {
 
         FileInputStream fileInputStream = new FileInputStream("txt/input.txt");
         Scanner scanner = new Scanner(fileInputStream);
@@ -36,7 +36,6 @@ public class Main {
             System.out.println(""+(i+1)+".treasure:");
             System.out.println("X:"+treasureXpositions[i]+" Y:"+treasureYpositions[i]+"\n");
         }
-
         System.out.println("Starting position\nX:"+startX+" Y:"+startY+"\nMutation:"+mutation+"\n");
          */
 

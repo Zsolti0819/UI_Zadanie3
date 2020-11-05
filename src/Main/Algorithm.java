@@ -27,11 +27,11 @@ public class Algorithm {
         }
     }
 
-    public Subject proces(){
+    public Subject proces() throws CloneNotSupportedException {
 
         int generationCount = 0;
 
-        while( generationCount < maxGenerationCount) {
+        while(generationCount < maxGenerationCount) {
 
             int treasureCountForGenerations = 0;
 
