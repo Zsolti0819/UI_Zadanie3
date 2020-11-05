@@ -39,7 +39,7 @@ public class Algorithm {
 
             // Ohodnot populaciu pomoou virtualneho stroja a zapis hodnoty fitness
             for(int i = 0; i< subjectCount; i++){
-                virtualMachine.spustiProgram(population[i]);
+                virtualMachine.run(population[i]);
                 treasureCountForGenerations = Math.max(treasureCountForGenerations, population[i].getTreasuresFound());
             }
 
@@ -138,7 +138,6 @@ public class Algorithm {
 
     }
 
-
     private Subject suboj(Subject j1, Subject j2){
         if(j1.getFitness() >= j2.getFitness()){
             return j1;
@@ -147,12 +146,3 @@ public class Algorithm {
     }
 }
 
-// Trieda definuje nové porovnávanie v prioritnej rade, podľa atribútu fitness
-// cim vacsia fitness, tým prvšia pozícia vo fronte
-class FitnessComparator implements Comparator<Subject> {
-
-    @Override
-    public int compare(Subject o1, Subject o2) {
-        return Integer.compare(o2.getFitness(), o1.getFitness());
-    }
-}

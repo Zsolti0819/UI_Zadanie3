@@ -8,8 +8,6 @@ public class VirtualMachine {
     private final Map map;
     private final TreasureFinder treasureFinder;
 
-    // Operacie VM a byte hodnoty
-
     private boolean printoutSolution = false;
 
     public VirtualMachine(Map map, TreasureFinder treasureFinder) {
@@ -17,17 +15,16 @@ public class VirtualMachine {
         this.treasureFinder = treasureFinder;
     }
 
-    public void spustiProgram(Subject subject) {
+    public void run (Subject subject) {
         int inc =  0;     // 00XX XXXX
         int dec =  64;    // 01XX XXXX
         int jump = 128;     // 10XX XXXX
+        // Pre výpis netreba deklarovať hodnotu, lebo ak hodnotu bunky násobíme s 11XX XXXX tak to nezmení nič
 
-        // Klonuj jedinca aby sa zachoval povodny program v jedincovi,
-        // kedze virtualny stroj prepisuje hodnoty v bunkach
+        // Klonujem subject, aby sa zachoval povodny, kvoli VM prepisuje hodnoty
         Subject vmSubject = subject.cloneNew();
 
-
-        // Resutujeme hladaca pokladov
+        // Resetujem treasurefinder
         treasureFinder.reset();
 
         int instructionCount = 0;
@@ -39,10 +36,7 @@ public class VirtualMachine {
         // 1. zbehne 500 instrukcii
         // 2. najdeme vsetky poklady
         // 3. sa ocitneme mimo mapy
-        while (instructionCount < maxInstructionCount) {
-
-            instructionCount++;
-
+        for (instructionCount = 0; instructionCount < maxInstructionCount; instructionCount++) {
             // Nacitamm dalsiu bunku jedinca
             int buff = vmSubject.getCell(next);
 
@@ -106,7 +100,6 @@ public class VirtualMachine {
         // Program skoncil, a neporuseny subject sa ohodnoti fitnessom
         // Fitness pozostava z poctu najdenych pokladov * 1000 minus pocet krokov
         // Preto bude mat riesenie s rovnakym poctom najdenych pokladov a
-
 
         int fitness = treasureFinder.getTreasuresFound()*1000 - treasureFinder.getStepCount();
         subject.setFitness(fitness);

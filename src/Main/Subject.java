@@ -1,6 +1,5 @@
 package Main;
 
-import java.awt.*;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -18,9 +17,8 @@ public class Subject {
     private final Queue<Position> moves = new LinkedList<>();
 
     public Subject(){
-        for(int i = 0; i< numberOfCells; i++){
+        for(int i = 0; i< numberOfCells; i++)
             memory[i] = randomByte();
-        }
     }
 
     // Krizenie
@@ -32,7 +30,6 @@ public class Subject {
         System.arraycopy(parent1.memory, 0, memory, 0, crossingPoint);
         System.arraycopy(parent2.memory, crossingPoint, memory, crossingPoint, numberOfCells - crossingPoint);
     }
-
 
     // Nahodny byte z itervalu <0,255>.
     // Toto cislo sa zmesti do 8-miestneho bytu.
@@ -60,7 +57,7 @@ public class Subject {
         this.stepCount = stepCount;
     }
 
-    public Subject cloneNew(){
+    public Subject cloneNew() {
         Subject newSubject = new Subject();
         newSubject.memory = this.memory.clone();
         return newSubject;

@@ -31,20 +31,17 @@ public class Main {
         int startY = scanner.nextInt();
         double mutation = scanner.nextDouble();
 
-        /*
-        System.out.println("pocetPokladov:"+pocetPokladov+
-                "\nmriezkaX:"+mriezkaX+
-                "\nmriezkaY:"+mriezkaY);
+        /* Pomocný výpis
+        for (int i = 0; i < treasureCount; i++) {
+            System.out.println(""+(i+1)+".treasure:");
+            System.out.println("X:"+treasureXpositions[i]+" Y:"+treasureYpositions[i]+"\n");
+        }
 
-        for (int i = 0; i < pocetPokladov; i++)
-            System.out.println("pokladX:"+pokladPozX[i]+"pokladY:"+pokladPozY[i]);
-        System.out.println("startX:"+startX+"\nstartY:"+startY+"\nmutacieField:"+mutacieField);
-        */
+        System.out.println("Starting position\nX:"+startX+" Y:"+startY+"\nMutation:"+mutation+"\n");
+         */
 
-        TestScenario testScenario = new TestScenario();
-        testScenario.testujScenar(treasureCount,columns,rows,treasureXpositions, treasureYpositions,startX,startY,mutation);
-
-        FindSolution findSolution = new FindSolution();
-        findSolution.najdiRiesenie(treasureCount,columns,rows,treasureXpositions, treasureYpositions,startX,startY,mutation);
+        Solve solve = new Solve();
+        solve.testScenario(treasureCount,columns,rows,treasureXpositions, treasureYpositions,startX,startY,mutation);
+        solve.findSolution(treasureCount,columns,rows,treasureXpositions, treasureYpositions,startX,startY,mutation);
     }
 }

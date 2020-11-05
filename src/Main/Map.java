@@ -5,8 +5,6 @@ import java.util.LinkedHashMap;
 
 public class Map
 {
-    // Hashujeme poklady pre rychlu kontrolu.
-
     private HashMap<String, Position> treasuresBackup;
     private HashMap<String, Position> treasures;
     private final int treasureCount;
@@ -55,7 +53,6 @@ public class Map
     private String hashCode(int x, int y){
         return x + " " + y;
     }
-
 
     public int getTreasureCount() {
         return treasureCount;

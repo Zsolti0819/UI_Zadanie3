@@ -8,7 +8,6 @@ public class TreasureFinder {
     private int stepCount;
     private final Map map;
 
-
     public TreasureFinder(int startX, int startY, Map map) {
         this.map = map;
         start = new Position();
@@ -26,7 +25,7 @@ public class TreasureFinder {
         stepCount = 0;
     }
 
-    // Zaregistruje moveTo cez vypis vo virtualnom stroji a podla pismenka vyvola moveTo na suradnice.
+    // Funkciu používam v triede VirtualMachine, kde podľa posledných 2 bitov rozhodneme, kam chceme ísť
     public Position whereToMove(String pohyb) throws OutsideOfTheMapException, CloneNotSupportedException {
         return switch (pohyb) {
             case "P" -> moveTo(1, 0);
@@ -50,7 +49,8 @@ public class TreasureFinder {
         stepCount++;
 
         // Zvysi pocet najdenych pokladov ak nasiel na novej pozicii poklad.
-        if(map.isTreasure(actualPosition.getCol(), actualPosition.getRow())){
+        if(map.isTreasure(actualPosition.getCol(), actualPosition.getRow())) {
+            // System.out.println("Hladac pokladov nasiel poklad na pozicii "+actualPosition.getCol()+","+actualPosition.getRow());
             treasureCount++;
         }
         return (Position) actualPosition.clone();
