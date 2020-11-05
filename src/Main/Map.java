@@ -1,6 +1,5 @@
 package Main;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -21,16 +20,14 @@ public class Map
         this.maxHeight = maxHeight;
     }
 
-    // Vytvori hash mapu pokladov (bodov / suradnic) zo stringu podla formatu "x,y"
-    public void parseTreasures(String treasures){
-        String[] doubles = treasures.split("\n");
+    // Vytvori hash mapu pokladov podla suradnic x,y
+    public void hashMapForTreasures(int [] pokladyX, int [] pokladyY){
         this.treasures = new LinkedHashMap<>(treasureCount);
         this.treasuresBackup = new LinkedHashMap<>(treasureCount);
         for(int i = 0; i< treasureCount; i++){
-            String[] numbers = doubles[i].split(",");
             Position p = new Position();
-            p.setRow(Integer.parseInt(numbers[1]));
-            p.setCol(Integer.parseInt(numbers[0]));
+            p.setRow(pokladyY[i]);
+            p.setCol(pokladyX[i]);
             this.treasures.put(hashCode(p.getCol(),p.getRow()), p);
             this.treasuresBackup.put(hashCode(p.getCol(),p.getRow()), p);
         }
@@ -47,10 +44,7 @@ public class Map
 
     // Overi ci sa bod nenachadza  mimo mapy
     public Boolean isOnTheMap(int x, int y){
-        if(x < this.maxLength && x >= 0 && y < maxHeight && y >= 0){
-            return true;
-        }
-        return false;
+        return x < this.maxLength && x >= 0 && y < maxHeight && y >= 0;
     }
 
     public void resetMap(){

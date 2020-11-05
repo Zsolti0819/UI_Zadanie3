@@ -1,11 +1,11 @@
 package Main;
 
 public class TestScenario {
-    void testujScenar(int pocetPokladov, int mriezkaX, int mriezkaY, String suradnicePokladov, int startX, int startY, double mutaciaField) {
+    void testujScenar(int pocetPokladov, int mriezkaX, int mriezkaY, int [] pokladyX, int [] pokladyY, int startX, int startY, double mutaciaField) {
 
         Map map = new Map(pocetPokladov, mriezkaX, mriezkaY);
 
-        map.parseTreasures(suradnicePokladov);
+        map.hashMapForTreasures(pokladyX, pokladyY);
 
         TreasureFinder h = new TreasureFinder(startX, startY, map);
 
