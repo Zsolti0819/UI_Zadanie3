@@ -22,56 +22,44 @@ public class VirtualMachine {
         int jump = 128;     // 10XX XXXX
         // Pre výpis netreba deklarovať hodnotu, lebo ak hodnotu bunky násobíme s 11XX XXXX tak to nezmení nič
 
-        // Klonujem subject, aby sa zachoval pôvodny, kvôli VM prepisuje hodnoty
-        Subject vmSubject = subject.cloneNew();
+        Subject vmSubject = subject.cloneNew(); // Klonujem subject, aby sa zachoval pôvodny, kvôli VM prepisuje hodnoty
 
-        // Resetujem treasurefinder
-        treasureFinder.reset();
+        treasureFinder.reset(); // Resetujem treasurefinder
 
-        // Index bunky jedinca, ktora sa nacita v dalsej iteraci
-        int next = 0;
+
+        int next = 0; // Index bunky jedinca, ktora sa nacita v dalsej iteraci
 
         // Prebiehaju instrukcie pokial :
         // 1. zbehne 500 instrukcii
         // 2. najdeme vsetky poklady
         // 3. sa ocitneme mimo mapy
         for (instructionCount = 0; instructionCount < maxInstructionCount; instructionCount++) {
-            // Nacitamm dalsiu bunku jedinca
-            int buff = vmSubject.getCell(next);
 
-            // Nastavime dalsiu bunku a ak dosiahne maxPocetBuniek tak prejde 0 vdaka modulu
-            next = ++next % Subject.numberOfCells;
+            int buff = vmSubject.getCell(next); // Nacitamm dalsiu bunku jedinca
 
-            // Ziskaj operaciu a cislo bunky
+            next = ++next % Subject.numberOfCells; // Nastavime dalsiu bunku a ak dosiahne maxPocetBuniek tak prejde 0 vdaka modulu
+
             int operation = buff & 192;       // 192 => 1100 0000
             int value = buff & 63;      // 63  => 0011 1111
 
-            // Vypis
             if (operation == inc) {
-                // Ziska hodnotu pozadovanej bunky jedinca, inkrementuje a zmeni v jedincovi
-                int cell = vmSubject.getCell(value);
+                int cell = vmSubject.getCell(value); // ziskanie hodnotu bunky jedinca
                 cell = ++cell % 256; // ak inkrementujeme 1111 1111 tak dostaneme 0000 0000
-                vmSubject.setCell(value, cell);
-
-            } else if (operation == dec) {
-
-                // Ziska hodnotu pozadovanej bunky jedinca, dekrementuje a zmeni v jedincovi
+                vmSubject.setCell(value, cell); // inkrementovanu hodnotu ulozime v jedincovi
+            }
+            else if (operation == dec) {
                 int cell = vmSubject.getCell(value);
                 cell = --cell % 256; // Ak dekrementujem 0000 0000 dostanem 1111 1111
                 vmSubject.setCell(value, cell);
+            }
+            else if (operation == jump)
+                next = value; // V dalsom kroku programu sa nacita vybrana bunka
 
-            } else if (operation == jump) {
-
-                // V dalsom kroku programu sa nacita vybrana bunka
-                next = value;
-
-            } else {
-
-                // Ziska hodnotu pozadovanej bunky jedinca
+            else {
                 int cell = vmSubject.getCell(value);
                 int move = cell % 4;
 
-                    Position p = switch (move) {
+                    Position position = switch (move) {
                         case 0 -> treasureFinder.moveTo(1, 0); // HORE
                         case 1 -> treasureFinder.moveTo(0, 1); // VPRAVO
                         case 2 -> treasureFinder.moveTo(0, -1); // DOLE
@@ -80,16 +68,15 @@ public class VirtualMachine {
                     };
 
                     if(this.printoutSolution){
-                        subject.addNewMove(p);
+                        subject.addNewMove(position);
                     }
                 }
 
-            // Hladac pokladoj ocitil mimi mapy
+            // Ak hladač išiel mimo mapy
             if (treasureFinder.isFailed())
                 break;
 
-
-            // Over ci nasiel vsetky poklady
+            // Ak hladač našiel všetky poklady
             if(treasureFinder.getTreasuresFound() == map.getTreasureCount()) {
                 break;
             }

@@ -31,7 +31,7 @@ public class TreasureFinder {
         actualPosition.setCol(actualPosition.getCol()+pohybX);
         actualPosition.setRow(actualPosition.getRow()+pohybY);
 
-        // Ak sa ocitne mimo mapy
+        // Ak hladač išiel mimo mapy
         if(! map.isOnTheMap(actualPosition.getCol(), actualPosition.getRow()))
             failed = true;
 

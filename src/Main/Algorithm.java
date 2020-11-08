@@ -4,16 +4,11 @@ import java.util.*;
 
 public class Algorithm {
 
-    // Konstanty
     public static final int subjectCount = 100;
-    //public static final int maxGenerationCount = 500;
-
-    // Premenne
     private Subject[] population = new Subject[subjectCount];
     private final Map map;
     private final VirtualMachine virtualMachine;
-    private final double probabilityOfMutation; // Pravdepobost mutaci
-
+    private final double probabilityOfMutation;
 
     public Algorithm(Map map, TreasureFinder treasureFinder, double mutations){
 
