@@ -33,18 +33,20 @@ public class Algorithm {
 
         while(generationCount < maxGenerationCount) {
 
-            int treasureCountForGenerations = 0;
+            int treasuresFoundByGeneration = 0;
 
             generationCount++;
 
             // Ohodnot populaciu pomoou virtualneho stroja a zapis hodnoty fitness
-            for(int i = 0; i< subjectCount; i++){
-                virtualMachine.run(population[i]);
-                treasureCountForGenerations = Math.max(treasureCountForGenerations, population[i].getTreasuresFound());
+            int buffer = 0;
+            while (buffer < subjectCount) {
+                virtualMachine.run(population[buffer]);
+                treasuresFoundByGeneration = Math.max(treasuresFoundByGeneration, population[buffer].getTreasuresFound());
+                buffer++;
             }
 
             // Vytvorime novu generaciu, ktorou nahradime po krizeni a mutaciach tu povodnu
-            Subject[] novaPopulacia = new Subject[subjectCount];
+            Subject[] newPopulation = new Subject[subjectCount];
 
             // Vytvorim prioritny rad a vlozim vsetkych jedincov
             // Porovnam podla fitness hodnoty oboch jedincov
@@ -58,13 +60,13 @@ public class Algorithm {
 
             // Elitarizmus - najlepsich 10% jedincov (podla fitness) sa automaticky naklonuje do novej populacie
             int pocElity = subjectCount / 10;
-            for(int i=0; i<pocElity; i++){
+            for(buffer=0; buffer<pocElity; buffer++){
 
-                novaPopulacia[i] = jedinciFronta.remove();
+                newPopulation[buffer] = jedinciFronta.remove();
 
                 // Ak sme nasli vsetky poklady, vratime jedinca a skonci while
-                if(treasureCountForGenerations == map.getTreasureCount()) {
-                    return novaPopulacia[i];
+                if(treasuresFoundByGeneration == map.getTreasureCount()) {
+                    return newPopulation[buffer];
                 }
             }
 
@@ -96,7 +98,7 @@ public class Algorithm {
                 Subject j2 = ruleta.get(rand.nextInt(ruleta.size()));
 
                 Subject krizenec = new Subject(j1, j2);
-                novaPopulacia[i+pocElity] = krizenec;
+                newPopulation[i+pocElity] = krizenec;
             }
 
 
@@ -114,7 +116,7 @@ public class Algorithm {
                 Subject rodic2 = suboj(j3, j4);
 
                 Subject krizenec = new Subject(rodic1, rodic2);
-                novaPopulacia[i+pocElity+pocetRulety] = krizenec;
+                newPopulation[i+pocElity+pocetRulety] = krizenec;
             }
 
 
@@ -125,12 +127,12 @@ public class Algorithm {
                 // Pravdepobnost medzi 0.0 az 1.0, ktore vracia newxtDouble()
                 double pravd = rand.nextDouble();
                 if(pravd <= probabilityOfMutation){
-                    novaPopulacia[i].mutate();
+                    newPopulation[i].mutate();
                 }
             }
 
             // Nahrad povodnu populaciu novou
-            population = novaPopulacia;
+            population = newPopulation;
         }
 
         // Vrati najuspesnejsieho jedinca ak sme nenasli vsetky poklady
