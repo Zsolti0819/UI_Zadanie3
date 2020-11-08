@@ -59,8 +59,8 @@ public class Algorithm {
             double maxFitness = jedinciFronta.peek().getFitness();
 
             // Elitarizmus - najlepsich 10% jedincov (podla fitness) sa automaticky naklonuje do novej populacie
-            int pocElity = subjectCount / 10;
-            for(buffer=0; buffer<pocElity; buffer++){
+            int eliteSubjectsCount = subjectCount / 10;
+            for (buffer=0; buffer < eliteSubjectsCount; buffer++){
 
                 newPopulation[buffer] = jedinciFronta.remove();
 
@@ -92,32 +92,15 @@ public class Algorithm {
                 }
             }
 
-            for(int i=0; i<pocetRulety  ; i++){
+            for(int i=0; i<pocetRulety; i++){
 
                 Subject j1 = ruleta.get(rand.nextInt(ruleta.size()));
                 Subject j2 = ruleta.get(rand.nextInt(ruleta.size()));
 
                 Subject krizenec = new Subject(j1, j2);
-                newPopulation[i+pocElity] = krizenec;
+                newPopulation[i+eliteSubjectsCount] = krizenec;
             }
-
-
-            // Selekcia rodicov pomocou metody turnaja
-            // Nahodne sa vyberu 4 jedinci z populacie
-            // a dvaja lokalni vitazi sa skrizia a vytvoria noveho potomka .
-            for(int i=0; i<pocetTurnaja; i++){
-
-                Subject j1 = population[rand.nextInt(subjectCount)];
-                Subject j2 = population[rand.nextInt(subjectCount)];
-                Subject rodic1 = suboj(j1, j2);
-
-                Subject j3 = population[rand.nextInt(subjectCount)];
-                Subject j4 = population[rand.nextInt(subjectCount)];
-                Subject rodic2 = suboj(j3, j4);
-
-                Subject krizenec = new Subject(rodic1, rodic2);
-                newPopulation[i+pocElity+pocetRulety] = krizenec;
-            }
+            tournament(newPopulation, eliteSubjectsCount, population, pocetRulety, pocetTurnaja);
 
 
             // Mutacie - podla pravdepodobnosti sa zmutuje x percent celej polupulacie
@@ -140,7 +123,28 @@ public class Algorithm {
 
     }
 
-    private Subject suboj(Subject j1, Subject j2){
+    public void tournament(Subject[] newPopulation, int eliteSubjectsCount, Subject [] population, int pocetRulety, int pocetTurnaja) {
+        // Selekcia rodicov pomocou metody turnaja
+        // Nahodne sa vyberu 4 jedinci z populacie
+        // a dvaja lokalni vitazi sa skrizia a vytvoria noveho potomka .
+        int i = 0;
+        while (i < pocetTurnaja) {
+            Random rand = new Random();
+            Subject j1 = population[rand.nextInt(subjectCount)];
+            Subject j2 = population[rand.nextInt(subjectCount)];
+            Subject rodic1 = duel(j1, j2);
+
+            Subject j3 = population[rand.nextInt(subjectCount)];
+            Subject j4 = population[rand.nextInt(subjectCount)];
+            Subject rodic2 = duel(j3, j4);
+
+            Subject krizenec = new Subject(rodic1, rodic2);
+            newPopulation[i+eliteSubjectsCount+pocetRulety] = krizenec;
+            i++;
+        }
+    }
+
+    private Subject duel (Subject j1, Subject j2){
         if(j1.getFitness() >= j2.getFitness()){
             return j1;
         }

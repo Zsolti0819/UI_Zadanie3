@@ -6,7 +6,7 @@ public class TreasureFinder {
     private final Position actualPosition = new Position();
     private int treasureCount;
     private int stepCount;
-    private int fails;
+    private boolean failed = false;
     private final Map map;
 
     public TreasureFinder(int startX, int startY, Map map) {
@@ -24,7 +24,7 @@ public class TreasureFinder {
         actualPosition.setRow(start.getRow());
         treasureCount = map.isTreasure(start.getCol(), start.getRow()) ? 1 : 0; // Ak uz stoji na poklade tak zarata 1 poklad;
         stepCount = 0;
-        fails = 0;
+        failed = false;
     }
 
     // Funkciu používam v triede VirtualMachine, kde podľa posledných 2 bitov rozhodneme, kam chceme ísť
@@ -44,9 +44,8 @@ public class TreasureFinder {
         actualPosition.setRow(actualPosition.getRow()+pohybY);
 
         // Ak sa ocitne mimo mapy vyhodi vynimku
-        if(! map.isOnTheMap(actualPosition.getCol(), actualPosition.getRow())) {
-            fails++;
-        }
+        if(! map.isOnTheMap(actualPosition.getCol(), actualPosition.getRow()))
+            failed = true;
 
         stepCount++;
 
@@ -73,13 +72,10 @@ public class TreasureFinder {
         return stepCount;
     }
 
-    public int getFails() {
-        return fails;
+    public boolean isFailed() {
+        return failed;
     }
 
-    public void setFails(int fails) {
-        this.fails = fails;
-    }
 }
 
 

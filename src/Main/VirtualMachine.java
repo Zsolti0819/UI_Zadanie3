@@ -86,6 +86,10 @@ public class VirtualMachine {
 
                 }
 
+            // Hladac pokladoj ocitil mimi mapy
+            if (treasureFinder.isFailed())
+                break;
+
 
             // Over ci nasiel vsetky poklady
             if(treasureFinder.getTreasuresFound() == map.getTreasureCount()) {
