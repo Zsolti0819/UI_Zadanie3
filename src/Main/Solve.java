@@ -1,7 +1,7 @@
 package Main;
 
 public class Solve {
-    void findSolution(int pocetPokladov, int mriezkaX, int mriezkaY, int [] pokladyX, int [] pokladyY, int startX, int startY, double mutaciaField) throws CloneNotSupportedException {
+    void findSolution(int pocetPokladov, int mriezkaX, int mriezkaY, int [] pokladyX, int [] pokladyY, int startX, int startY, int maxGenerationCount, double mutaciaField) throws CloneNotSupportedException {
 
         Map map = new Map(pocetPokladov, mriezkaX, mriezkaY);
         map.hashMapForTreasures(pokladyX, pokladyY);
@@ -9,7 +9,7 @@ public class Solve {
         Algorithm g = new Algorithm(map, h, mutaciaField);
 
         // Vypisanie riesenia
-        Subject j = g.proces();
+        Subject j = g.proces(maxGenerationCount);
         VirtualMachine vm = new VirtualMachine(map, h);
         vm.setPrintoutSolution(true);
         vm.run(j);
@@ -30,7 +30,7 @@ public class Solve {
         System.out.println("poklady:"+j.getTreasuresFound());
         System.out.println("krokov:"+j.getStepCount());
     }
-    void testScenario(int pocetPokladov, int mriezkaX, int mriezkaY, int [] pokladyX, int [] pokladyY, int startX, int startY, double mutaciaField) throws CloneNotSupportedException {
+    void testScenario(int pocetPokladov, int mriezkaX, int mriezkaY, int [] pokladyX, int [] pokladyY, int startX, int startY, int maxGenerationCount, double mutaciaField) throws CloneNotSupportedException {
 
         Map map = new Map(pocetPokladov, mriezkaX, mriezkaY);
         map.hashMapForTreasures(pokladyX, pokladyY);
@@ -42,7 +42,7 @@ public class Solve {
         for(int i=0; i<100; i++) {
             Algorithm g = new Algorithm(map, treasureFinder, mutaciaField);
             // Vypisanie riesenia
-            Subject j = g.proces();
+            Subject j = g.proces(maxGenerationCount);
             priemerPocetKrokov += j.getStepCount();
             priemerPoklady += j.getTreasuresFound();
         }

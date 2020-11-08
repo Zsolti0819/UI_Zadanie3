@@ -6,7 +6,7 @@ public class Algorithm {
 
     // Konstanty
     public static final int subjectCount = 100;
-    public static final int maxGenerationCount = 500;
+    //public static final int maxGenerationCount = 500;
 
     // Premenne
     private Subject[] population = new Subject[subjectCount];
@@ -27,7 +27,7 @@ public class Algorithm {
         }
     }
 
-    public Subject proces() throws CloneNotSupportedException {
+    public Subject proces(int maxGenerationCount) throws CloneNotSupportedException {
 
         int generationCount = 0;
 
@@ -100,35 +100,37 @@ public class Algorithm {
                 Subject krizenec = new Subject(j1, j2);
                 newPopulation[i+eliteSubjectsCount] = krizenec;
             }
+
             tournament(newPopulation, eliteSubjectsCount, population, pocetRulety, pocetTurnaja);
 
+            mutate(newPopulation, rand);
 
-            // Mutacie - podla pravdepodobnosti sa zmutuje x percent celej polupulacie
-            // Subject mutuje tak, ze sa jedna jeho bunka nahodne nahradi inou hodnotou.
-            for(int i = 0; i< subjectCount; i++){
-
-                // Pravdepobnost medzi 0.0 az 1.0, ktore vracia newxtDouble()
-                double pravd = rand.nextDouble();
-                if(pravd <= probabilityOfMutation){
-                    newPopulation[i].mutate();
-                }
-            }
-
-            // Nahrad povodnu populaciu novou
-            population = newPopulation;
+            population = newPopulation; // Nahradíme pôvodnú populáciu novou
         }
 
-        // Vrati najuspesnejsieho jedinca ak sme nenasli vsetky poklady
-        return population[0];
+        return population[0]; // Ak sme nenašli všetky poklady, tak vráti najúspešnejšieho jedinca
 
     }
 
-    public void tournament(Subject[] newPopulation, int eliteSubjectsCount, Subject [] population, int pocetRulety, int pocetTurnaja) {
+    public void mutate(Subject[] newPopulation, Random rand) {
+        // Mutacie - podla pravdepodobnosti sa zmutuje x percent celej polupulacie
+        // Subject mutuje tak, ze sa jedna jeho bunka nahodne nahradi inou hodnotou.
+        for(int i = 0; i< subjectCount; i++){
+
+            // Pravdepobnost medzi 0.0 az 1.0, ktore vracia newxtDouble()
+            double probability = rand.nextDouble();
+            if(probability <= probabilityOfMutation){
+                newPopulation[i].mutate();
+            }
+        }
+    }
+
+    public void tournament(Subject[] newPopulation, int eliteSubjectsCount, Subject [] population, int numberOfRoulettes, int numberOfTournaments) {
         // Selekcia rodicov pomocou metody turnaja
         // Nahodne sa vyberu 4 jedinci z populacie
         // a dvaja lokalni vitazi sa skrizia a vytvoria noveho potomka .
         int i = 0;
-        while (i < pocetTurnaja) {
+        while (i < numberOfTournaments) {
             Random rand = new Random();
             Subject j1 = population[rand.nextInt(subjectCount)];
             Subject j2 = population[rand.nextInt(subjectCount)];
@@ -139,7 +141,7 @@ public class Algorithm {
             Subject rodic2 = duel(j3, j4);
 
             Subject krizenec = new Subject(rodic1, rodic2);
-            newPopulation[i+eliteSubjectsCount+pocetRulety] = krizenec;
+            newPopulation[i+eliteSubjectsCount+numberOfRoulettes] = krizenec;
             i++;
         }
     }

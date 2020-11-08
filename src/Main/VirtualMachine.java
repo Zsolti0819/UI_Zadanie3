@@ -9,7 +9,7 @@ public class VirtualMachine {
     private final TreasureFinder treasureFinder;
     private boolean printoutSolution = false;
 
-    public VirtualMachine(Map map, TreasureFinder treasureFinder) {
+    VirtualMachine(Map map, TreasureFinder treasureFinder) {
         this.map = map;
         this.treasureFinder = treasureFinder;
     }
@@ -71,19 +71,17 @@ public class VirtualMachine {
                 int cell = vmSubject.getCell(value);
                 int move = cell % 4;
 
-
                     Position p = switch (move) {
-                        case 0 -> treasureFinder.whereToMove("H");
-                        case 1 -> treasureFinder.whereToMove("D");
-                        case 2 -> treasureFinder.whereToMove("P");
-                        case 3 -> treasureFinder.whereToMove("L");
+                        case 0 -> treasureFinder.moveTo(1, 0); // HORE
+                        case 1 -> treasureFinder.moveTo(0, 1); // VPRAVO
+                        case 2 -> treasureFinder.moveTo(0, -1); // DOLE
+                        case 3 -> treasureFinder.moveTo(-1, 0); // VLAVO
                         default -> null;
                     };
 
                     if(this.printoutSolution){
                         subject.addNewMove(p);
                     }
-
                 }
 
             // Hladac pokladoj ocitil mimi mapy
@@ -95,7 +93,6 @@ public class VirtualMachine {
             if(treasureFinder.getTreasuresFound() == map.getTreasureCount()) {
                 break;
             }
-
         }
 
         // Program skoncil, a neporuseny subject sa ohodnoti fitnessom

@@ -29,6 +29,7 @@ public class Main {
 
         int startX = scanner.nextInt();
         int startY = scanner.nextInt();
+        int maxGenerationCount = scanner.nextInt();
         double mutation = scanner.nextDouble();
 
         /* Pomocný výpis
@@ -40,7 +41,7 @@ public class Main {
          */
 
         Solve solve = new Solve();
-        solve.testScenario(treasureCount,columns,rows,treasureXpositions, treasureYpositions,startX,startY,mutation);
-        solve.findSolution(treasureCount,columns,rows,treasureXpositions, treasureYpositions,startX,startY,mutation);
+        solve.testScenario(treasureCount, columns, rows, treasureXpositions, treasureYpositions, startX, startY, maxGenerationCount, mutation);
+        solve.findSolution(treasureCount, columns, rows, treasureXpositions, treasureYpositions, startX, startY, maxGenerationCount, mutation);
     }
 }

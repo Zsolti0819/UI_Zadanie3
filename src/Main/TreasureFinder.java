@@ -27,23 +27,11 @@ public class TreasureFinder {
         failed = false;
     }
 
-    // Funkciu používam v triede VirtualMachine, kde podľa posledných 2 bitov rozhodneme, kam chceme ísť
-    public Position whereToMove(String pohyb) throws CloneNotSupportedException {
-        return switch (pohyb) {
-            case "P" -> moveTo(1, 0);
-            case "H" -> moveTo(0, 1);
-            case "D" -> moveTo(0, -1);
-            case "L" -> moveTo(-1, 0);
-            default -> null;
-        };
-    }
-
-    // Aktualizuj poziciiu hladaca a vyhod vynimku ak siahne mimo mapy
-    private Position moveTo(int pohybX, int pohybY) throws CloneNotSupportedException {
+    Position moveTo(int pohybX, int pohybY) throws CloneNotSupportedException {
         actualPosition.setCol(actualPosition.getCol()+pohybX);
         actualPosition.setRow(actualPosition.getRow()+pohybY);
 
-        // Ak sa ocitne mimo mapy vyhodi vynimku
+        // Ak sa ocitne mimo mapy
         if(! map.isOnTheMap(actualPosition.getCol(), actualPosition.getRow()))
             failed = true;
 
