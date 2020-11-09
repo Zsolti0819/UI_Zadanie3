@@ -37,7 +37,7 @@ public class Subject {
         return rand.nextInt(256);
     }
 
-    public void mutate(){
+    public void mutate() {
         this.memory[rand.nextInt(numberOfCells)] =  rand.nextInt(256); // max je 1111 1111 a min 0000 0000
     }
 

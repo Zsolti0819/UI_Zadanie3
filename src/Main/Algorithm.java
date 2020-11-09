@@ -65,7 +65,6 @@ public class Algorithm {
                 }
             }
 
-
             // Krizenie
             int pocetNovychPotomkov = (subjectCount / 10 ) * 9; // 90% novej populacie
 
@@ -74,11 +73,11 @@ public class Algorithm {
             // Selekcia rodicov pomocou metody rulety
 
             List<Subject> ruleta = new LinkedList<>();
-            int pocetRulety, pocetTurnaja;
-            pocetRulety = pocetTurnaja = pocetNovychPotomkov / 2;
+            int rouletteCount, tournamentCount;
+            rouletteCount = tournamentCount = pocetNovychPotomkov / 2;
 
 
-            for(int i=0; i<pocetRulety; i++){
+            for(int i=0; i < rouletteCount; i++){
                 Subject j = jedinciFronta.remove();
                 double n = j.getFitness() / maxFitness;
                 int pocet = (int)(n * 100);
@@ -87,7 +86,7 @@ public class Algorithm {
                 }
             }
 
-            for(int i=0; i<pocetRulety; i++){
+            for(int i=0; i < rouletteCount; i++){
 
                 Subject j1 = ruleta.get(rand.nextInt(ruleta.size()));
                 Subject j2 = ruleta.get(rand.nextInt(ruleta.size()));
@@ -96,7 +95,7 @@ public class Algorithm {
                 newPopulation[i+eliteSubjectsCount] = krizenec;
             }
 
-            tournament(newPopulation, eliteSubjectsCount, population, pocetRulety, pocetTurnaja);
+            tournament(newPopulation, eliteSubjectsCount, population, rouletteCount, tournamentCount);
 
             mutate(newPopulation, rand);
 
