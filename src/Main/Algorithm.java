@@ -66,7 +66,7 @@ public class Algorithm {
             }
 
             // Krizenie
-            int pocetNovychPotomkov = (subjectCount / 10 ) * 9; // 90% novej populacie
+            int newSubjectsCount = (subjectCount / 10 ) * 9; // 90% novej populacie
 
             Random rand = new Random();
 
@@ -74,7 +74,7 @@ public class Algorithm {
 
             List<Subject> ruleta = new LinkedList<>();
             int rouletteCount, tournamentCount;
-            rouletteCount = tournamentCount = pocetNovychPotomkov / 2;
+            rouletteCount = tournamentCount = newSubjectsCount / 2;
 
 
             for(int i=0; i < rouletteCount; i++){
