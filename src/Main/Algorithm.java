@@ -47,67 +47,52 @@ public class Algorithm {
             // Vytvorim prioritny rad a vlozim vsetkych jedincov
             // Porovnam podla fitness hodnoty oboch jedincov
             Comparator<Subject> fitnessComparator = new FitnessComparator();
-            PriorityQueue<Subject> jedinciFronta = new PriorityQueue<>(fitnessComparator);
-            jedinciFronta.addAll(Arrays.asList(population).subList(0, subjectCount));
+            PriorityQueue<Subject> frontSubjects = new PriorityQueue<>(fitnessComparator);
+            frontSubjects.addAll(Arrays.asList(population).subList(0, subjectCount));
 
-            // Ziskam maximalnu velkost fitness funkcie
-            assert jedinciFronta.peek() != null;
-            double maxFitness = jedinciFronta.peek().getFitness();
-
-            // Elitarizmus - najlepsich 10% jedincov (podla fitness) sa automaticky naklonuje do novej populacie
             int eliteSubjectsCount = subjectCount / 10;
-            for (buffer=0; buffer < eliteSubjectsCount; buffer++) {
-
-                newPopulation[buffer] = jedinciFronta.remove();
-
-                // Ak sme nasli vsetky poklady, vratime jedinca a skonci while
-                if(treasuresFoundByGeneration == map.getTreasureCount()) {
-                    return newPopulation[buffer];
-                }
-            }
-
-            // Krizenie
             int newSubjectsCount = (subjectCount / 10 ) * 9; // 90% novej populacie
 
-            Random rand = new Random();
+            // Funkcia vráti index jedinca, ktorý našiel všetky podklady
+            // Ak nebol taký jedinec, funkcia vrátí -1
+            int allTreasuresFound = elitism(eliteSubjectsCount, newSubjectsCount, newPopulation, frontSubjects, treasuresFoundByGeneration);
+            if (allTreasuresFound != -1)
+                return newPopulation[allTreasuresFound];
 
             // Selekcia rodicov pomocou metody rulety
 
-            List<Subject> ruleta = new LinkedList<>();
-            int rouletteCount, tournamentCount;
-            rouletteCount = tournamentCount = newSubjectsCount / 2;
+            int tournamentCount;
+            tournamentCount = newSubjectsCount;
 
-            roulette(newPopulation, jedinciFronta, maxFitness, eliteSubjectsCount, rand, ruleta, rouletteCount);
+            tournament(newPopulation, eliteSubjectsCount, population, tournamentCount);
 
-            tournament(newPopulation, eliteSubjectsCount, population, rouletteCount, tournamentCount);
+            Random rand = new Random();
 
             mutate(newPopulation, rand);
 
             population = newPopulation; // Nahradíme pôvodnú populáciu novou
-        } while(generationCount < maxGenerationCount);
+        } while (generationCount < maxGenerationCount);
 
         return population[0]; // Ak sme nenašli všetky poklady, tak vráti najúspešnejšieho jedinca
 
     }
 
-    public void roulette(Subject[] newPopulation, PriorityQueue<Subject> jedinciFronta, double maxFitness, int eliteSubjectsCount, Random rand, List<Subject> ruleta, int rouletteCount) {
-        for(int i = 0; i < rouletteCount; i++){
-            Subject j = jedinciFronta.remove();
-            double n = j.getFitness() / maxFitness;
-            int pocet = (int)(n * 100);
-            for(int k=0; k<pocet; k++){
-                ruleta.add(j);
-            }
+    public int elitism (int eliteSubjectsCount, int newSubjectsCount, Subject [] newPopulation, PriorityQueue<Subject>frontSubjects, int treasuresFoundByGeneration) {
+        // Elitarizmus - najlepsich 10% jedincov (podla fitness) sa automaticky naklonuje do novej populacie
+
+        for (int buffer=0; buffer < eliteSubjectsCount; buffer++) {
+            newPopulation[buffer] = frontSubjects.remove();
+
+            if(treasuresFoundByGeneration == map.getTreasureCount()) // Ak sme nasli vsetky poklady, vratime jedinca a skonci while
+                return buffer;
         }
 
-        for(int i = 0; i < rouletteCount; i++){
 
-            Subject j1 = ruleta.get(rand.nextInt(ruleta.size()));
-            Subject j2 = ruleta.get(rand.nextInt(ruleta.size()));
-
-            Subject krizenec = new Subject(j1, j2);
-            newPopulation[i+ eliteSubjectsCount] = krizenec;
+        for (int buffer = 0; buffer < newSubjectsCount; buffer++) {
+            Subject subject = frontSubjects.remove();
+            newPopulation[buffer+ eliteSubjectsCount] = subject;
         }
+        return -1;
     }
 
     public void mutate(Subject[] newPopulation, Random rand) {
@@ -123,28 +108,28 @@ public class Algorithm {
         }
     }
 
-    public void tournament(Subject[] newPopulation, int eliteSubjectsCount, Subject [] population, int numberOfRoulettes, int numberOfTournaments) {
+    public void tournament(Subject[] newPopulation, int eliteSubjectsCount, Subject[] population, int newSubjectsCount) {
         // Selekcia rodicov pomocou metody turnaja
         // Nahodne sa vyberu 4 jedinci z populacie
         // a dvaja lokalni vitazi sa skrizia a vytvoria noveho potomka .
-        int i = 0;
-        while (i < numberOfTournaments) {
+        int buffer = 0;
+        while (buffer < newSubjectsCount) {
             Random rand = new Random();
-            Subject j1 = population[rand.nextInt(subjectCount)];
-            Subject j2 = population[rand.nextInt(subjectCount)];
-            Subject rodic1 = duel(j1, j2);
+            Subject subject1 = population[rand.nextInt(subjectCount)];
+            Subject subject2 = population[rand.nextInt(subjectCount)];
+            Subject parent1 = duel(subject1, subject2);
 
-            Subject j3 = population[rand.nextInt(subjectCount)];
-            Subject j4 = population[rand.nextInt(subjectCount)];
-            Subject rodic2 = duel(j3, j4);
+            Subject subject3 = population[rand.nextInt(subjectCount)];
+            Subject subject4 = population[rand.nextInt(subjectCount)];
+            Subject parent2 = duel(subject3, subject4);
 
-            Subject krizenec = new Subject(rodic1, rodic2);
-            newPopulation[i+eliteSubjectsCount+numberOfRoulettes] = krizenec;
-            i++;
+            Subject hybrid = new Subject(parent1, parent2);
+            newPopulation[buffer+eliteSubjectsCount] = hybrid;
+            buffer++;
         }
     }
 
-    private Subject duel (Subject j1, Subject j2){
+    private Subject duel (Subject j1, Subject j2) {
         if(j1.getFitness() >= j2.getFitness()){
             return j1;
         }
