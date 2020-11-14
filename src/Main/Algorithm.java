@@ -15,23 +15,24 @@ public class Algorithm {
         this.map = map;
         this.virtualMachine = new VirtualMachine(map, treasureFinder);
         this.probabilityOfMutation = mutations;
+        generatePopulation();
+    }
 
-        // Vygeneruj pociatocnu populaciu
-        for(int i = 0; i< subjectCount; i++){
-            population[i] = new Subject();
-        }
+    public void generatePopulation() {
+        int buffer = 0;
+        do {
+            population[buffer] = new Subject();
+            buffer++;
+        } while (buffer < subjectCount);
     }
 
     public Subject proces(int maxGenerationCount) throws CloneNotSupportedException {
 
         int generationCount = 0;
 
-        while(generationCount < maxGenerationCount) {
-
-            int treasuresFoundByGeneration = 0;
-
+        do {
             generationCount++;
-
+            int treasuresFoundByGeneration = 0;
             // Ohodnot populaciu pomoou virtualneho stroja a zapis hodnoty fitness
             int buffer = 0;
             while (buffer < subjectCount) {
@@ -55,7 +56,7 @@ public class Algorithm {
 
             // Elitarizmus - najlepsich 10% jedincov (podla fitness) sa automaticky naklonuje do novej populacie
             int eliteSubjectsCount = subjectCount / 10;
-            for (buffer=0; buffer < eliteSubjectsCount; buffer++){
+            for (buffer=0; buffer < eliteSubjectsCount; buffer++) {
 
                 newPopulation[buffer] = jedinciFronta.remove();
 
@@ -76,34 +77,37 @@ public class Algorithm {
             int rouletteCount, tournamentCount;
             rouletteCount = tournamentCount = newSubjectsCount / 2;
 
-
-            for(int i=0; i < rouletteCount; i++){
-                Subject j = jedinciFronta.remove();
-                double n = j.getFitness() / maxFitness;
-                int pocet = (int)(n * 100);
-                for(int k=0; k<pocet; k++){
-                    ruleta.add(j);
-                }
-            }
-
-            for(int i=0; i < rouletteCount; i++){
-
-                Subject j1 = ruleta.get(rand.nextInt(ruleta.size()));
-                Subject j2 = ruleta.get(rand.nextInt(ruleta.size()));
-
-                Subject krizenec = new Subject(j1, j2);
-                newPopulation[i+eliteSubjectsCount] = krizenec;
-            }
+            roulette(newPopulation, jedinciFronta, maxFitness, eliteSubjectsCount, rand, ruleta, rouletteCount);
 
             tournament(newPopulation, eliteSubjectsCount, population, rouletteCount, tournamentCount);
 
             mutate(newPopulation, rand);
 
             population = newPopulation; // Nahradíme pôvodnú populáciu novou
-        }
+        } while(generationCount < maxGenerationCount);
 
         return population[0]; // Ak sme nenašli všetky poklady, tak vráti najúspešnejšieho jedinca
 
+    }
+
+    public void roulette(Subject[] newPopulation, PriorityQueue<Subject> jedinciFronta, double maxFitness, int eliteSubjectsCount, Random rand, List<Subject> ruleta, int rouletteCount) {
+        for(int i = 0; i < rouletteCount; i++){
+            Subject j = jedinciFronta.remove();
+            double n = j.getFitness() / maxFitness;
+            int pocet = (int)(n * 100);
+            for(int k=0; k<pocet; k++){
+                ruleta.add(j);
+            }
+        }
+
+        for(int i = 0; i < rouletteCount; i++){
+
+            Subject j1 = ruleta.get(rand.nextInt(ruleta.size()));
+            Subject j2 = ruleta.get(rand.nextInt(ruleta.size()));
+
+            Subject krizenec = new Subject(j1, j2);
+            newPopulation[i+ eliteSubjectsCount] = krizenec;
+        }
     }
 
     public void mutate(Subject[] newPopulation, Random rand) {
