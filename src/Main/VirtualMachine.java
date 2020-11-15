@@ -57,7 +57,7 @@ public class VirtualMachine {
 
             else {
                 int cell = vmSubject.getCell(value);
-                int move = cell % 4;
+                int move = cell & 3;
 
                     Position position = switch (move) {
                         case 0 -> treasureFinder.moveTo(1, 0); // HORE

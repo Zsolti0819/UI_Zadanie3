@@ -9,20 +9,20 @@ public class Solve {
         Algorithm algorithm = new Algorithm(map, treasureFinder, mutation);
 
         // Vypisanie riesenia
-        Subject subject = algorithm.proces(maxGenerationCount);
+        Subject subject = algorithm.converge(maxGenerationCount);
         VirtualMachine virtualMachine = new VirtualMachine(map, treasureFinder);
         virtualMachine.setPrintoutSolution(true);
         virtualMachine.run(subject);
 
         int moves = subject.getMovesSize();
-        System.out.println("Hladac ma zaciatocnu poziciu (x,y): [" + treasureFinder.getStartX() + "," + treasureFinder.getStartY() + "]");
-        for (int i=0; i < moves; i++){
+        System.out.println("Start: [" + treasureFinder.getStartX() + "," + treasureFinder.getStartY() + "]");
+        for (int bufer = 0; bufer < moves; bufer++){
             Position p = subject.removeFirstMove();
-            if (i != (moves-1) && p != null)
-                System.out.println("Hladac je na pozicii (x,y): [" + p.getCol() + "," + p.getRow()+"]");
+            if (bufer != (moves-1) && p != null)
+                System.out.println(""+(bufer+1)+": [" + p.getCol() + "," + p.getRow()+"]");
 
             else if (p != null)
-                System.out.println("Hladac koncil na pozicii (x,y): [" + p.getCol() + "," + p.getRow()+"]");
+                System.out.println(""+(bufer+1)+": [" + p.getCol() + "," + p.getRow()+"]");
 
         }
 
@@ -42,7 +42,7 @@ public class Solve {
         for(int i = 0; i < 100; i++) {
             Algorithm algorithm = new Algorithm(map, treasureFinder, mutation);
             // Vypisanie riesenia
-            Subject subject = algorithm.proces(maxGenerationCount);
+            Subject subject = algorithm.converge(maxGenerationCount);
             averageSteps += subject.getStepCount();
             averageTreasures += subject.getTreasuresFound();
         }

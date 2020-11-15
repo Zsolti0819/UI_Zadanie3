@@ -18,6 +18,7 @@ public class Algorithm {
         generatePopulation();
     }
 
+    // Vytvorenie populácie
     public void generatePopulation() {
         int buffer = 0;
         do {
@@ -26,8 +27,7 @@ public class Algorithm {
         } while (buffer < subjectCount);
     }
 
-    public Subject proces(int maxGenerationCount) throws CloneNotSupportedException {
-
+    public Subject converge (int maxGenerationCount) throws CloneNotSupportedException {
         int generationCount = 0;
 
         do {
@@ -50,20 +50,19 @@ public class Algorithm {
             PriorityQueue<Subject> frontSubjects = new PriorityQueue<>(fitnessComparator);
             frontSubjects.addAll(Arrays.asList(population).subList(0, subjectCount));
 
-            int eliteSubjectsCount = subjectCount / 10;
-            int newSubjectsCount = (subjectCount / 10 ) * 9; // 90% novej populacie
+            int eliteSubjectsCount = subjectCount / 5;
+            int newSubjectsCount = (subjectCount / 10 ) * 8; // 80% novej populacie
+            Subject[] bufferPopulation = new Subject[newSubjectsCount];
 
             // Funkcia vráti index jedinca, ktorý našiel všetky podklady
             // Ak nebol taký jedinec, funkcia vrátí -1
-            int allTreasuresFound = elitism(eliteSubjectsCount, newSubjectsCount, newPopulation, frontSubjects, treasuresFoundByGeneration);
-            if (allTreasuresFound != -1)
-                return newPopulation[allTreasuresFound]; // Skončíme cyklus, lebo našli sme jedinca, ktorý našiel všetky poklady
+            int richestSubjectIndex = elitism(eliteSubjectsCount, newSubjectsCount, newPopulation, bufferPopulation, frontSubjects, treasuresFoundByGeneration);
+            if (richestSubjectIndex != -1)
+                return newPopulation[richestSubjectIndex]; // Skončíme cyklus, lebo našli sme jedinca, ktorý našiel všetky poklady
 
-            int test = newSubjectsCount/2;
+            rankSelection(newPopulation, bufferPopulation, eliteSubjectsCount, newSubjectsCount);
 
-            // rankSelection(generationCount, newPopulation, eliteSubjectsCount, test);
-
-            tournament(newPopulation, eliteSubjectsCount, population, test);
+            tournament(newPopulation, eliteSubjectsCount, population, newSubjectsCount);
 
             mutate(newPopulation);
 
@@ -75,9 +74,8 @@ public class Algorithm {
 
     }
 
-    public int elitism (int eliteSubjectsCount, int newSubjectsCount, Subject [] newPopulation, PriorityQueue<Subject>frontSubjects, int treasuresFoundByGeneration) {
-        // Elitarizmus - najlepsich 10% jedincov (podla fitness) sa automaticky naklonuje do novej populacie
-
+    public int elitism (int eliteSubjectsCount, int newSubjectsCount, Subject [] newPopulation, Subject [] bufferPopulation, PriorityQueue<Subject>frontSubjects, int treasuresFoundByGeneration) {
+        // Elitarizmus - najlepsich 20% jedincov (podla fitness) sa automaticky naklonuje do novej populacie
         for (int buffer=0; buffer < eliteSubjectsCount; buffer++) {
             newPopulation[buffer] = frontSubjects.remove();
 
@@ -87,44 +85,42 @@ public class Algorithm {
 
         for (int buffer = 0; buffer < newSubjectsCount; buffer++) {
             Subject subject = frontSubjects.remove();
-            newPopulation[buffer+ eliteSubjectsCount] = subject;
+            bufferPopulation[buffer] = subject;
         }
         return -1;
     }
 
-    public void rankSelection(int generationCount, Subject[] newPopulation, int eliteSubjectsCount, int newSubjectsCount) {
+    public void rankSelection(Subject[] newPopulation, Subject[] bufferPopulation, int eliteSubjectsCount, int dividedSubjectsCount) {
+        // Pomocou bubble sortu zoradíme pole jedincov
+        // Jedinec s najnižšou fitness hodnotou je na 0. pozícií
         int i, j;
-
-        for (i = 0; i < newSubjectsCount -1; i++) {
-            for (j = 0; j < newSubjectsCount -i-1; j++) {
-                if (newPopulation[j].getFitness() > newPopulation[j+1].getFitness()) {
-                    int temp = newPopulation[j].getFitness();
-                    newPopulation[j].setFitness(newPopulation[j+1].getFitness());
-                    newPopulation[j+1].setFitness(temp);
+        for (i = 0; i < dividedSubjectsCount -1; i++) {
+            for (j = 0; j < dividedSubjectsCount - i-1; j++) {
+                if (bufferPopulation[j].getFitness() > bufferPopulation[j+1].getFitness()) {
+                    int temp = bufferPopulation[j].getFitness();
+                    bufferPopulation[j].setFitness(bufferPopulation[j+1].getFitness());
+                    bufferPopulation[j+1].setFitness(temp);
                 }
             }
         }
 
-        for (i = 0; i < newSubjectsCount; i++)
-            newPopulation[i].setRank(i+1);
+        // Nastavíme hodnosť pre všetky jedince
+        for (i = 0; i < dividedSubjectsCount; i++)
+            bufferPopulation[i].setRank(i + 1);
 
-        for (i = 0; i < newSubjectsCount/2; i++) {
-            System.out.println("" + generationCount + ". generacia, " + (i + 1) + ". jedinec, rank:" + newPopulation[i].getRank() + ", fitness: " + newPopulation[i].getFitness());
+            // Podľa Gaussovej formuly vypočítame pravdepodobnosť výskytu jedinca
+        // Čím väčšia hodnosť má jedinec, tým väčšiu pravdepodobnosť má na to, aby sme ho vybrali
+        List<Subject> roulette = new LinkedList<>();
+        for (i = 0; i < dividedSubjectsCount; i++) {
+            int probability = (bufferPopulation[i].getRank()*1000) / GaussFormula(dividedSubjectsCount);
+            //System.out.println(""+(i)+". jedinec, hodnost: "+bufferPopulation[i].getRank()+", fitness: "+bufferPopulation[i].getFitness()+", pravdepodobnost vyskytu: "+probability);
+            for (j = 0; j < probability; j++)
+                roulette.add(bufferPopulation[i]);
         }
 
-        List<Subject> roulette = new LinkedList<Subject>();
+        // Kríženie
         Random random = new Random();
-
-        for (i = 1; i <= newSubjectsCount; i++)
-        {
-            int probablityTwo = (i / GaussFormula(newSubjectsCount))*100;
-            for (j = 0; j < probablityTwo; j++)
-                roulette.add(newPopulation[i]);
-        }
-
-        i = 0;
-        while (i < newSubjectsCount) {
-            i++;
+        for (i = 0; i < dividedSubjectsCount; i++) {
             Subject t1 = roulette.get(random.nextInt(roulette.size()));
             Subject t2 = roulette.get(random.nextInt(roulette.size()));
             Subject hybrid = new Subject(t1, t2);
@@ -132,16 +128,12 @@ public class Algorithm {
         }
     }
 
-    int GaussFormula (int newSubjectsCount) {
-        return ((newSubjectsCount+1) * (newSubjectsCount/2));
-    }
-
-    public void tournament(Subject[] newPopulation, int eliteSubjectsCount, Subject[] population, int newSubjectsCount) {
+    public void tournament(Subject[] newPopulation, int eliteSubjectsCount, Subject[] population, int dividedSubjectsCount) {
         // Selekcia rodicov pomocou metody turnaja
         // Nahodne sa vyberu 4 jedinci z populacie
         // a dvaja lokalni vitazi sa skrizia a vytvoria noveho potomka .
         int buffer = 0;
-        while (buffer < newSubjectsCount) {
+        while (buffer < dividedSubjectsCount) {
             Random rand = new Random();
             Subject subject1 = population[rand.nextInt(subjectCount)];
             Subject subject2 = population[rand.nextInt(subjectCount)];
@@ -161,21 +153,21 @@ public class Algorithm {
         // Mutacie - podla pravdepodobnosti sa zmutuje x percent celej polupulacie
         // Subject mutuje tak, ze sa jedna jeho bunka nahodne nahradi inou hodnotou.
         Random rand = new Random();
-        for(int i = 0; i< subjectCount; i++){
-
-            // Pravdepobnost medzi 0.0 az 1.0, ktore vracia newxtDouble()
+        for(int i = 0; i< subjectCount; i++) {
             double probability = rand.nextDouble();
-            if(probability <= probabilityOfMutation){
+            if(probability <= probabilityOfMutation)
                 newPopulation[i].mutate();
-            }
         }
     }
 
     private Subject duel (Subject j1, Subject j2) {
-        if(j1.getFitness() >= j2.getFitness()){
+        if(j1.getFitness() >= j2.getFitness())
             return j1;
-        }
         return j2;
+    }
+
+    int GaussFormula (int newSubjectsCount) {
+        return ((newSubjectsCount+1) * (newSubjectsCount/2));
     }
 }
 
