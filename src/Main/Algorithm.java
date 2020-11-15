@@ -57,20 +57,18 @@ public class Algorithm {
             // Ak nebol taký jedinec, funkcia vrátí -1
             int allTreasuresFound = elitism(eliteSubjectsCount, newSubjectsCount, newPopulation, frontSubjects, treasuresFoundByGeneration);
             if (allTreasuresFound != -1)
-                return newPopulation[allTreasuresFound];
+                return newPopulation[allTreasuresFound]; // Skončíme cyklus, lebo našli sme jedinca, ktorý našiel všetky poklady
 
-            // Selekcia rodicov pomocou metody rulety
+            int test = newSubjectsCount/2;
 
-            int tournamentCount;
-            tournamentCount = newSubjectsCount;
+            // rankSelection(generationCount, newPopulation, eliteSubjectsCount, test);
 
-            tournament(newPopulation, eliteSubjectsCount, population, tournamentCount);
+            tournament(newPopulation, eliteSubjectsCount, population, test);
 
-            Random rand = new Random();
-
-            mutate(newPopulation, rand);
+            mutate(newPopulation);
 
             population = newPopulation; // Nahradíme pôvodnú populáciu novou
+
         } while (generationCount < maxGenerationCount);
 
         return population[0]; // Ak sme nenašli všetky poklady, tak vráti najúspešnejšieho jedinca
@@ -87,7 +85,6 @@ public class Algorithm {
                 return buffer;
         }
 
-
         for (int buffer = 0; buffer < newSubjectsCount; buffer++) {
             Subject subject = frontSubjects.remove();
             newPopulation[buffer+ eliteSubjectsCount] = subject;
@@ -95,17 +92,48 @@ public class Algorithm {
         return -1;
     }
 
-    public void mutate(Subject[] newPopulation, Random rand) {
-        // Mutacie - podla pravdepodobnosti sa zmutuje x percent celej polupulacie
-        // Subject mutuje tak, ze sa jedna jeho bunka nahodne nahradi inou hodnotou.
-        for(int i = 0; i< subjectCount; i++){
+    public void rankSelection(int generationCount, Subject[] newPopulation, int eliteSubjectsCount, int newSubjectsCount) {
+        int i, j;
 
-            // Pravdepobnost medzi 0.0 az 1.0, ktore vracia newxtDouble()
-            double probability = rand.nextDouble();
-            if(probability <= probabilityOfMutation){
-                newPopulation[i].mutate();
+        for (i = 0; i < newSubjectsCount -1; i++) {
+            for (j = 0; j < newSubjectsCount -i-1; j++) {
+                if (newPopulation[j].getFitness() > newPopulation[j+1].getFitness()) {
+                    int temp = newPopulation[j].getFitness();
+                    newPopulation[j].setFitness(newPopulation[j+1].getFitness());
+                    newPopulation[j+1].setFitness(temp);
+                }
             }
         }
+
+        for (i = 0; i < newSubjectsCount; i++)
+            newPopulation[i].setRank(i+1);
+
+        for (i = 0; i < newSubjectsCount/2; i++) {
+            System.out.println("" + generationCount + ". generacia, " + (i + 1) + ". jedinec, rank:" + newPopulation[i].getRank() + ", fitness: " + newPopulation[i].getFitness());
+        }
+
+        List<Subject> roulette = new LinkedList<Subject>();
+        Random random = new Random();
+
+        for (i = 1; i <= newSubjectsCount; i++)
+        {
+            int probablityTwo = (i / GaussFormula(newSubjectsCount))*100;
+            for (j = 0; j < probablityTwo; j++)
+                roulette.add(newPopulation[i]);
+        }
+
+        i = 0;
+        while (i < newSubjectsCount) {
+            i++;
+            Subject t1 = roulette.get(random.nextInt(roulette.size()));
+            Subject t2 = roulette.get(random.nextInt(roulette.size()));
+            Subject hybrid = new Subject(t1, t2);
+            newPopulation[i+eliteSubjectsCount] = hybrid;
+        }
+    }
+
+    int GaussFormula (int newSubjectsCount) {
+        return ((newSubjectsCount+1) * (newSubjectsCount/2));
     }
 
     public void tournament(Subject[] newPopulation, int eliteSubjectsCount, Subject[] population, int newSubjectsCount) {
@@ -126,6 +154,20 @@ public class Algorithm {
             Subject hybrid = new Subject(parent1, parent2);
             newPopulation[buffer+eliteSubjectsCount] = hybrid;
             buffer++;
+        }
+    }
+
+    public void mutate(Subject[] newPopulation) {
+        // Mutacie - podla pravdepodobnosti sa zmutuje x percent celej polupulacie
+        // Subject mutuje tak, ze sa jedna jeho bunka nahodne nahradi inou hodnotou.
+        Random rand = new Random();
+        for(int i = 0; i< subjectCount; i++){
+
+            // Pravdepobnost medzi 0.0 az 1.0, ktore vracia newxtDouble()
+            double probability = rand.nextDouble();
+            if(probability <= probabilityOfMutation){
+                newPopulation[i].mutate();
+            }
         }
     }
 

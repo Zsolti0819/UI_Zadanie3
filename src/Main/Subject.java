@@ -10,6 +10,16 @@ public class Subject {
     public static final int numberOfCells = 64;
 
     private int fitness;
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
+    private int rank;
     private int treasuresFound;
     private int stepCount;
     private final Random rand = new Random();
