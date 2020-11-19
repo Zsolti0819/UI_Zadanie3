@@ -2,9 +2,7 @@ package Main;
 
 public class VirtualMachine {
 
-    // Konstanty
     public static final int maxInstructionCount = 500;
-
     private final Map map;
     private final TreasureFinder treasureFinder;
     private boolean printoutSolution = false;
@@ -25,8 +23,7 @@ public class VirtualMachine {
         Subject vmSubject = subject.cloneNew(); // Klonujem subject, aby sa zachoval pôvodny, kvôli VM prepisuje hodnoty
 
         treasureFinder.reset(); // Resetujem treasurefinder
-
-
+        
         int next = 0; // Index bunky jedinca, ktora sa nacita v dalsej iteraci
 
         // Prebiehaju instrukcie pokial :

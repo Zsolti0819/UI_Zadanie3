@@ -27,7 +27,7 @@ public class TreasureFinder {
         failed = false;
     }
 
-    Position moveTo(int pohybX, int pohybY) throws CloneNotSupportedException {
+    public Position moveTo(int pohybX, int pohybY) throws CloneNotSupportedException {
         actualPosition.setCol(actualPosition.getCol()+pohybX);
         actualPosition.setRow(actualPosition.getRow()+pohybY);
 

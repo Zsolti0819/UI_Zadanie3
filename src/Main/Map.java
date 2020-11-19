@@ -31,7 +31,7 @@ public class Map
         }
     }
 
-    // Vrati true ak je na [x,y] lezi poklad
+    // Funkcia vráti true ak na [x,y] je poklad
     public Boolean isTreasure(int x, int y){
         if(treasures.containsKey(hashCode(x,y))) {
             treasures.remove(hashCode(x,y));
@@ -40,16 +40,15 @@ public class Map
         return false;
     }
 
-    // Overi ci sa bod nenachadza  mimo mapy
+    // Funkcia na zistenie, či daný bod nenachádza mimo mapy
     public Boolean isOnTheMap(int x, int y){
         return x < this.maxLength && x >= 0 && y < maxHeight && y >= 0;
     }
 
-    public void resetMap(){
+    public void resetMap() {
         treasures = (HashMap<String, Position>) treasuresBackup.clone();
     }
 
-    // Vytvori unikatny string pre suradnice x a y.
     private String hashCode(int x, int y){
         return x + " " + y;
     }

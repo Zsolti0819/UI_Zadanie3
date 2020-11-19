@@ -60,9 +60,12 @@ public class Algorithm {
             if (richestSubjectIndex != -1)
                 return newPopulation[richestSubjectIndex]; // Skončíme cyklus, lebo našli sme jedinca, ktorý našiel všetky poklady
 
-            rankSelection(newPopulation, bufferPopulation, eliteSubjectsCount, newSubjectsCount);
+            int rsSubjectsCount = (newSubjectsCount / 4) * 3;
+            int tSubjectsCount = (newSubjectsCount / 4);
 
-            tournament(newPopulation, eliteSubjectsCount, population, newSubjectsCount);
+            rankSelection(newPopulation, bufferPopulation, eliteSubjectsCount, rsSubjectsCount);
+
+            tournament(newPopulation, eliteSubjectsCount, population, tSubjectsCount, rsSubjectsCount);
 
             mutate(newPopulation);
 
@@ -76,10 +79,10 @@ public class Algorithm {
 
     public int elitism (int eliteSubjectsCount, int newSubjectsCount, Subject [] newPopulation, Subject [] bufferPopulation, PriorityQueue<Subject>frontSubjects, int treasuresFoundByGeneration) {
         // Elitarizmus - najlepsich 20% jedincov (podla fitness) sa automaticky naklonuje do novej populacie
-        for (int buffer=0; buffer < eliteSubjectsCount; buffer++) {
+        for (int buffer = 0; buffer < eliteSubjectsCount; buffer++) {
             newPopulation[buffer] = frontSubjects.remove();
 
-            if(treasuresFoundByGeneration == map.getTreasureCount()) // Ak sme nasli vsetky poklady, vratime jedinca a skonci while
+            if(treasuresFoundByGeneration == map.getTreasureCount()) // Ak sme našli všetky poklady, tak vráti index jedinca
                 return buffer;
         }
 
@@ -90,37 +93,40 @@ public class Algorithm {
         return -1;
     }
 
-    public void rankSelection(Subject[] newPopulation, Subject[] bufferPopulation, int eliteSubjectsCount, int dividedSubjectsCount) {
+    public void rankSelection(Subject[] newPopulation, Subject[] bufferPopulation, int eliteSubjectsCount, int rsSubjectsCount) {
         // Pomocou bubble sortu zoradíme pole jedincov
         // Jedinec s najnižšou fitness hodnotou je na 0. pozícií
         int i, j;
-        for (i = 0; i < dividedSubjectsCount -1; i++) {
-            for (j = 0; j < dividedSubjectsCount - i-1; j++) {
-                if (bufferPopulation[j].getFitness() > bufferPopulation[j+1].getFitness()) {
+        for (i = 0; i < rsSubjectsCount - 1; i++) {
+            for (j = 0; j < rsSubjectsCount - i - 1; j++) {
+                if (bufferPopulation[j].getFitness() > bufferPopulation[j + 1].getFitness()) {
                     int temp = bufferPopulation[j].getFitness();
-                    bufferPopulation[j].setFitness(bufferPopulation[j+1].getFitness());
-                    bufferPopulation[j+1].setFitness(temp);
+                    bufferPopulation[j].setFitness(bufferPopulation[j + 1].getFitness());
+                    bufferPopulation[j + 1].setFitness(temp);
                 }
             }
         }
 
         // Nastavíme hodnosť pre všetky jedince
-        for (i = 0; i < dividedSubjectsCount; i++)
+        for (i = 0; i < rsSubjectsCount; i++) {
             bufferPopulation[i].setRank(i + 1);
+        }
 
-            // Podľa Gaussovej formuly vypočítame pravdepodobnosť výskytu jedinca
+
+        // Podľa Gaussovej formuly vypočítame pravdepodobnosť výskytu jedinca
         // Čím väčšia hodnosť má jedinec, tým väčšiu pravdepodobnosť má na to, aby sme ho vybrali
         List<Subject> roulette = new LinkedList<>();
-        for (i = 0; i < dividedSubjectsCount; i++) {
-            int probability = (bufferPopulation[i].getRank()*1000) / GaussFormula(dividedSubjectsCount);
-            //System.out.println(""+(i)+". jedinec, hodnost: "+bufferPopulation[i].getRank()+", fitness: "+bufferPopulation[i].getFitness()+", pravdepodobnost vyskytu: "+probability);
+        int probability;
+        for (i = 0; i < rsSubjectsCount; i++) {
+            probability = (bufferPopulation[i].getRank() * 1000) / GaussFormula(rsSubjectsCount);
+            // System.out.println("" + (i) + ". jedinec, hodnost: " + bufferPopulation[i].getRank() + ", fitness: " + bufferPopulation[i].getFitness() + ", pravdepodobnost vyskytu: " + probability);
             for (j = 0; j < probability; j++)
                 roulette.add(bufferPopulation[i]);
         }
 
         // Kríženie
         Random random = new Random();
-        for (i = 0; i < dividedSubjectsCount; i++) {
+        for (i = 0; i < rsSubjectsCount; i++) {
             Subject t1 = roulette.get(random.nextInt(roulette.size()));
             Subject t2 = roulette.get(random.nextInt(roulette.size()));
             Subject hybrid = new Subject(t1, t2);
@@ -128,12 +134,12 @@ public class Algorithm {
         }
     }
 
-    public void tournament(Subject[] newPopulation, int eliteSubjectsCount, Subject[] population, int dividedSubjectsCount) {
+    public void tournament(Subject[] newPopulation, int eliteSubjectsCount, Subject[] population, int tSubjectsCount, int rsSubjectsCount) {
         // Selekcia rodicov pomocou metody turnaja
         // Nahodne sa vyberu 4 jedinci z populacie
         // a dvaja lokalni vitazi sa skrizia a vytvoria noveho potomka .
         int buffer = 0;
-        while (buffer < dividedSubjectsCount) {
+        while (buffer < tSubjectsCount) {
             Random rand = new Random();
             Subject subject1 = population[rand.nextInt(subjectCount)];
             Subject subject2 = population[rand.nextInt(subjectCount)];
@@ -144,7 +150,7 @@ public class Algorithm {
             Subject parent2 = duel(subject3, subject4);
 
             Subject hybrid = new Subject(parent1, parent2);
-            newPopulation[buffer+eliteSubjectsCount] = hybrid;
+            newPopulation[buffer+eliteSubjectsCount+rsSubjectsCount] = hybrid;
             buffer++;
         }
     }
@@ -153,7 +159,7 @@ public class Algorithm {
         // Mutacie - podla pravdepodobnosti sa zmutuje x percent celej polupulacie
         // Subject mutuje tak, ze sa jedna jeho bunka nahodne nahradi inou hodnotou.
         Random rand = new Random();
-        for(int i = 0; i< subjectCount; i++) {
+        for(int i = 0; i < subjectCount; i++) {
             double probability = rand.nextDouble();
             if(probability <= probabilityOfMutation)
                 newPopulation[i].mutate();
