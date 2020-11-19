@@ -60,12 +60,12 @@ public class Algorithm {
             if (richestSubjectIndex != -1)
                 return newPopulation[richestSubjectIndex]; // Skončíme cyklus, lebo našli sme jedinca, ktorý našiel všetky poklady
 
-            int rsSubjectsCount = (newSubjectsCount / 4) * 3;
-            int tSubjectsCount = (newSubjectsCount / 4);
-
-            rankSelection(newPopulation, bufferPopulation, eliteSubjectsCount, rsSubjectsCount);
+            int rsSubjectsCount = (newSubjectsCount / 4);
+            int tSubjectsCount = (newSubjectsCount / 4)*3;
 
             tournament(newPopulation, eliteSubjectsCount, population, tSubjectsCount, rsSubjectsCount);
+
+            rankSelection(newPopulation, bufferPopulation, eliteSubjectsCount, tSubjectsCount, rsSubjectsCount);
 
             mutate(newPopulation);
 
@@ -93,7 +93,7 @@ public class Algorithm {
         return -1;
     }
 
-    public void rankSelection(Subject[] newPopulation, Subject[] bufferPopulation, int eliteSubjectsCount, int rsSubjectsCount) {
+    public void rankSelection(Subject[] newPopulation, Subject[] bufferPopulation, int eliteSubjectsCount, int tSubjectsCount, int rsSubjectsCount) {
         // Pomocou bubble sortu zoradíme pole jedincov
         // Jedinec s najnižšou fitness hodnotou je na 0. pozícií
         int i, j;
@@ -130,7 +130,7 @@ public class Algorithm {
             Subject t1 = roulette.get(random.nextInt(roulette.size()));
             Subject t2 = roulette.get(random.nextInt(roulette.size()));
             Subject hybrid = new Subject(t1, t2);
-            newPopulation[i+eliteSubjectsCount] = hybrid;
+            newPopulation[i+eliteSubjectsCount+tSubjectsCount] = hybrid;
         }
     }
 
@@ -150,7 +150,7 @@ public class Algorithm {
             Subject parent2 = duel(subject3, subject4);
 
             Subject hybrid = new Subject(parent1, parent2);
-            newPopulation[buffer+eliteSubjectsCount+rsSubjectsCount] = hybrid;
+            newPopulation[buffer+eliteSubjectsCount] = hybrid;
             buffer++;
         }
     }

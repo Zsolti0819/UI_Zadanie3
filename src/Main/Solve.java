@@ -38,6 +38,7 @@ public class Solve {
 
         double averageTreasures = 0;
         double averageSteps = 0;
+        double averageFitness = 0;
 
         for(int i = 0; i < 100; i++) {
             Algorithm algorithm = new Algorithm(map, treasureFinder, mutation);
@@ -45,12 +46,14 @@ public class Solve {
             Subject subject = algorithm.converge(maxGenerationCount);
             averageSteps += subject.getStepCount();
             averageTreasures += subject.getTreasuresFound();
+            averageFitness += subject.getFitness();
         }
 
         averageSteps /= 100;
         averageTreasures /= 100;
+        averageFitness /= 100;
 
-        System.out.println("Priemerne poklady: " +averageTreasures + "\nKroky " + averageSteps);
+        System.out.println("Priemerne poklady: " +averageTreasures + "\nKroky " + averageSteps+"\nPriemerny fitness: "+averageFitness);
 
     }
 }
