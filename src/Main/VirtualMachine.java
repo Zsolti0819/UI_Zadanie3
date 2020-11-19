@@ -24,12 +24,8 @@ public class VirtualMachine {
 
         treasureFinder.reset(); // Resetujem treasurefinder
         
-        int next = 0; // Index bunky jedinca, ktora sa nacita v dalsej iteraci
+        int next = 0;
 
-        // Prebiehaju instrukcie pokial :
-        // 1. zbehne 500 instrukcii
-        // 2. najdeme vsetky poklady
-        // 3. sa ocitneme mimo mapy
         for (instructionCount = 0; instructionCount < maxInstructionCount; instructionCount++) {
 
             int buff = vmSubject.getCell(next); // Nacitamm dalsiu bunku jedinca

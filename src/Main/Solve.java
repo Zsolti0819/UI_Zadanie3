@@ -8,7 +8,6 @@ public class Solve {
         TreasureFinder treasureFinder = new TreasureFinder(startX, startY, map);
         Algorithm algorithm = new Algorithm(map, treasureFinder, mutation);
 
-        // Vypisanie riesenia
         Subject subject = algorithm.converge(maxGenerationCount);
         VirtualMachine virtualMachine = new VirtualMachine(map, treasureFinder);
         virtualMachine.setPrintoutSolution(true);

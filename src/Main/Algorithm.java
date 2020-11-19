@@ -10,8 +10,7 @@ public class Algorithm {
     private final VirtualMachine virtualMachine;
     private final double probabilityOfMutation;
 
-    public Algorithm(Map map, TreasureFinder treasureFinder, double mutations){
-
+    public Algorithm(Map map, TreasureFinder treasureFinder, double mutations) {
         this.map = map;
         this.virtualMachine = new VirtualMachine(map, treasureFinder);
         this.probabilityOfMutation = mutations;
@@ -29,7 +28,6 @@ public class Algorithm {
 
     public Subject converge (int maxGenerationCount) throws CloneNotSupportedException {
         int generationCount = 0;
-
         do {
             generationCount++;
             int treasuresFoundByGeneration = 0;
@@ -78,7 +76,6 @@ public class Algorithm {
     }
 
     public int elitism (int eliteSubjectsCount, int newSubjectsCount, Subject [] newPopulation, Subject [] bufferPopulation, PriorityQueue<Subject>frontSubjects, int treasuresFoundByGeneration) {
-        // Elitarizmus - najlepsich 20% jedincov (podla fitness) sa automaticky naklonuje do novej populacie
         for (int buffer = 0; buffer < eliteSubjectsCount; buffer++) {
             newPopulation[buffer] = frontSubjects.remove();
 
@@ -135,9 +132,6 @@ public class Algorithm {
     }
 
     public void tournament(Subject[] newPopulation, int eliteSubjectsCount, Subject[] population, int tSubjectsCount, int rsSubjectsCount) {
-        // Selekcia rodicov pomocou metody turnaja
-        // Nahodne sa vyberu 4 jedinci z populacie
-        // a dvaja lokalni vitazi sa skrizia a vytvoria noveho potomka .
         int buffer = 0;
         while (buffer < tSubjectsCount) {
             Random rand = new Random();

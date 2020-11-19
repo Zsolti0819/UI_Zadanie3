@@ -41,7 +41,7 @@ public class Main {
          */
 
         Solve solve = new Solve();
-        solve.testScenario(treasureCount, columns, rows, treasureXpositions, treasureYpositions, startX, startY, maxGenerationCount, mutation);
-        //solve.findSolution(treasureCount, columns, rows, treasureXpositions, treasureYpositions, startX, startY, maxGenerationCount, mutation);
+        // solve.testScenario(treasureCount, columns, rows, treasureXpositions, treasureYpositions, startX, startY, maxGenerationCount, mutation);
+        solve.findSolution(treasureCount, columns, rows, treasureXpositions, treasureYpositions, startX, startY, maxGenerationCount, mutation);
     }
 }
