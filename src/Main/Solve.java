@@ -29,7 +29,7 @@ public class Solve {
         System.out.println("Poklady najdene:"+subject.getTreasuresFound());
         System.out.println("Krokov:"+subject.getStepCount());
     }
-    void testScenario(int treasuresCount, int columns, int rows, int [] treasureXpositions, int [] treasureYpositions, int startX, int startY, int maxGenerationCount, double mutation) throws CloneNotSupportedException {
+    void benchmark(int treasuresCount, int columns, int rows, int [] treasureXpositions, int [] treasureYpositions, int startX, int startY, int maxGenerationCount, double mutation) throws CloneNotSupportedException {
 
         Map map = new Map(treasuresCount, columns, rows);
         map.hashMapForTreasures(treasureXpositions, treasureYpositions);

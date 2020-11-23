@@ -37,7 +37,7 @@ public class TreasureFinder {
 
         stepCount++;
 
-        // Zvysi pocet najdenych pokladov ak nasiel na novej pozicii poklad.
+        // Zvyšuj počet nájdených nákladov
         if(map.isTreasure(actualPosition.getCol(), actualPosition.getRow())) {
             treasureCount++;
         }

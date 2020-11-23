@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Algorithm {
 
-    public static final int subjectCount = 100;
+    public static final int subjectCount = 100; // Každá generácia má 100 jedincov
     private Subject[] population = new Subject[subjectCount];
     private final Map map;
     private final VirtualMachine virtualMachine;
@@ -31,37 +31,37 @@ public class Algorithm {
         do {
             generationCount++;
             int treasuresFoundByGeneration = 0;
-            // Ohodnot populaciu pomoou virtualneho stroja a zapis hodnoty fitness
             int buffer = 0;
+
+            // Ohodnot populaciu pomoou virtualneho stroja a zapis hodnoty fitness
             while (buffer < subjectCount) {
                 virtualMachine.run(population[buffer]);
                 treasuresFoundByGeneration = Math.max(treasuresFoundByGeneration, population[buffer].getTreasuresFound());
                 buffer++;
             }
 
-            // Vytvorime novu generaciu, ktorou nahradime po krizeni a mutaciach tu povodnu
             Subject[] newPopulation = new Subject[subjectCount];
 
-            // Vytvorim prioritny rad a vlozim vsetkych jedincov
-            // Porovnam podla fitness hodnoty oboch jedincov
+            // Vytvorenie prioritného radu, do ktorého vložím všetkých jedincov
+            // Porovnam ich podľa fitness hodnôt
             Comparator<Subject> fitnessComparator = new FitnessComparator();
             PriorityQueue<Subject> frontSubjects = new PriorityQueue<>(fitnessComparator);
             frontSubjects.addAll(Arrays.asList(population).subList(0, subjectCount));
 
-            int eliteSubjectsCount = subjectCount / 5;
-            int newSubjectsCount = (subjectCount / 10 ) * 8; // 80% novej populacie
-            Subject[] bufferPopulation = new Subject[newSubjectsCount];
+            int eliteSubjectsCount = subjectCount / 5; // Z najlepších 20% stane elitov
+            int newSubjectsCount = (subjectCount / 10 ) * 8; // Zvyšných 80% percent
+            Subject[] bufferPopulation = new Subject[newSubjectsCount]; // Pomocné pole pre vytvorenie novej generácií
 
-            // Funkcia vráti index jedinca, ktorý našiel všetky podklady
+            // Funkcia elitism() vráti index jedinca, ktorý našiel všetky podklady
             // Ak nebol taký jedinec, funkcia vrátí -1
             int richestSubjectIndex = elitism(eliteSubjectsCount, newSubjectsCount, newPopulation, bufferPopulation, frontSubjects, treasuresFoundByGeneration);
             if (richestSubjectIndex != -1)
                 return newPopulation[richestSubjectIndex]; // Skončíme cyklus, lebo našli sme jedinca, ktorý našiel všetky poklady
 
-            int rsSubjectsCount = (newSubjectsCount / 4);
-            int tSubjectsCount = (newSubjectsCount / 4)*3;
+            int rsSubjectsCount = (newSubjectsCount / 4); // 20 jedincov vyberám pomocou rank selection
+            int tSubjectsCount = (newSubjectsCount / 4)*3; // 60 jedincov ide na turnaj
 
-            tournament(newPopulation, eliteSubjectsCount, population, tSubjectsCount, rsSubjectsCount);
+            tournament(newPopulation, eliteSubjectsCount, population, tSubjectsCount);
 
             rankSelection(newPopulation, bufferPopulation, eliteSubjectsCount, tSubjectsCount, rsSubjectsCount);
 
@@ -91,7 +91,7 @@ public class Algorithm {
     }
 
     public void rankSelection(Subject[] newPopulation, Subject[] bufferPopulation, int eliteSubjectsCount, int tSubjectsCount, int rsSubjectsCount) {
-        // Pomocou bubble sortu zoradíme pole jedincov
+        // Pomocou bubble sortu zoradíme pomocné pole jedincov
         // Jedinec s najnižšou fitness hodnotou je na 0. pozícií
         int i, j;
         for (i = 0; i < rsSubjectsCount - 1; i++) {
@@ -104,7 +104,7 @@ public class Algorithm {
             }
         }
 
-        // Nastavíme hodnosť pre všetky jedince
+        // Nastavíme hodnosť pre všetky jedince (najhorší bude mať hodnosť 1)
         for (i = 0; i < rsSubjectsCount; i++) {
             bufferPopulation[i].setRank(i + 1);
         }
@@ -124,14 +124,14 @@ public class Algorithm {
         // Kríženie
         Random random = new Random();
         for (i = 0; i < rsSubjectsCount; i++) {
-            Subject t1 = roulette.get(random.nextInt(roulette.size()));
-            Subject t2 = roulette.get(random.nextInt(roulette.size()));
-            Subject hybrid = new Subject(t1, t2);
+            Subject parent1 = roulette.get(random.nextInt(roulette.size()));
+            Subject parent2 = roulette.get(random.nextInt(roulette.size()));
+            Subject hybrid = new Subject(parent1, parent2);
             newPopulation[i+eliteSubjectsCount+tSubjectsCount] = hybrid;
         }
     }
 
-    public void tournament(Subject[] newPopulation, int eliteSubjectsCount, Subject[] population, int tSubjectsCount, int rsSubjectsCount) {
+    public void tournament(Subject[] newPopulation, int eliteSubjectsCount, Subject[] population, int tSubjectsCount) {
         int buffer = 0;
         while (buffer < tSubjectsCount) {
             Random rand = new Random();
@@ -150,8 +150,8 @@ public class Algorithm {
     }
 
     public void mutate(Subject[] newPopulation) {
-        // Mutacie - podla pravdepodobnosti sa zmutuje x percent celej polupulacie
-        // Subject mutuje tak, ze sa jedna jeho bunka nahodne nahradi inou hodnotou.
+        // Podľa pravdepodobnosti sa zmutuje x percent celej populácie
+        // Subject mutuje tak, že sa jedna jeho bunka náhodne nahradí inou hodnotou.
         Random rand = new Random();
         for(int i = 0; i < subjectCount; i++) {
             double probability = rand.nextDouble();
@@ -160,10 +160,10 @@ public class Algorithm {
         }
     }
 
-    private Subject duel (Subject j1, Subject j2) {
-        if(j1.getFitness() >= j2.getFitness())
-            return j1;
-        return j2;
+    private Subject duel (Subject subject1, Subject subject2) {
+        if(subject1.getFitness() >= subject2.getFitness())
+            return subject1;
+        return subject2;
     }
 
     int GaussFormula (int newSubjectsCount) {

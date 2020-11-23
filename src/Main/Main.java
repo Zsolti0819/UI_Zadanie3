@@ -32,7 +32,8 @@ public class Main {
         int maxGenerationCount = scanner.nextInt();
         double mutation = scanner.nextDouble();
 
-        /* Pomocný výpis
+        // Pomocný výpis
+        /*
         for (int i = 0; i < treasureCount; i++) {
             System.out.println(""+(i+1)+".treasure:");
             System.out.println("X:"+treasureXpositions[i]+" Y:"+treasureYpositions[i]+"\n");
@@ -41,7 +42,7 @@ public class Main {
          */
 
         Solve solve = new Solve();
-        // solve.testScenario(treasureCount, columns, rows, treasureXpositions, treasureYpositions, startX, startY, maxGenerationCount, mutation);
+        solve.benchmark(treasureCount, columns, rows, treasureXpositions, treasureYpositions, startX, startY, maxGenerationCount, mutation);
         solve.findSolution(treasureCount, columns, rows, treasureXpositions, treasureYpositions, startX, startY, maxGenerationCount, mutation);
     }
 }

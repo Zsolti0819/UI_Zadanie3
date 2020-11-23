@@ -75,10 +75,6 @@ public class VirtualMachine {
             }
         }
 
-        // Program skoncil, a neporuseny subject sa ohodnoti fitnessom
-        // Fitness pozostava z poctu najdenych pokladov * 1000 minus pocet krokov
-        // Preto bude mat riesenie s rovnakym poctom najdenych pokladov a
-
         int fitness = treasureFinder.getTreasuresFound()*1000 - treasureFinder.getStepCount();
         subject.setFitness(fitness);
         subject.setTreasuresFound(treasureFinder.getTreasuresFound());

@@ -22,13 +22,15 @@ public class Map
     public void hashMapForTreasures(int [] pokladyX, int [] pokladyY){
         this.treasures = new LinkedHashMap<>(treasureCount);
         this.treasuresBackup = new LinkedHashMap<>(treasureCount);
-        for(int i = 0; i< treasureCount; i++){
+        int buffer = 0;
+        do {
             Position p = new Position();
-            p.setRow(pokladyY[i]);
-            p.setCol(pokladyX[i]);
+            p.setRow(pokladyY[buffer]);
+            p.setCol(pokladyX[buffer]);
             this.treasures.put(hashCode(p.getCol(),p.getRow()), p);
             this.treasuresBackup.put(hashCode(p.getCol(),p.getRow()), p);
-        }
+            buffer++;
+        } while (buffer < treasureCount);
     }
 
     // Funkcia vráti true ak na [x,y] je poklad
