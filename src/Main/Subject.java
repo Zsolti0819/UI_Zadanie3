@@ -31,18 +31,15 @@ public class Subject {
             memory[i] = randomByte();
     }
 
-    // Krizenie
-    // Novu jedinec, ktory vznikne krizenim rodicov 1 a 2
+    // Kríženie
     public Subject(Subject parent1, Subject parent2){
 
-        // Dedenie ... nahodne sa zvoli cislo (bod) krizenia, podla ktoreho sa cast zdedi od jedneho rodica a druha od druheho
+        // Náhodne sa zvoli bod kríženia, podľa ktorého sa časť zdedí od jedného rodiča a druhá od druhého
         int crossingPoint = rand.nextInt(numberOfCells);
         System.arraycopy(parent1.memory, 0, memory, 0, crossingPoint);
         System.arraycopy(parent2.memory, crossingPoint, memory, crossingPoint, numberOfCells - crossingPoint);
     }
 
-    // Nahodny byte z itervalu <0,255>.
-    // Toto cislo sa zmesti do 8-miestneho bytu.
     public int randomByte() {
         return rand.nextInt(256);
     }

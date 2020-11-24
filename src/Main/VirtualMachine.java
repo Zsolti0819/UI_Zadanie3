@@ -22,23 +22,23 @@ public class VirtualMachine {
 
         Subject vmSubject = subject.cloneNew(); // Klonujem subject, aby sa zachoval pôvodny, kvôli VM prepisuje hodnoty
 
-        treasureFinder.reset(); // Resetujem treasurefinder
+        treasureFinder.reset();
         
         int next = 0;
 
         for (instructionCount = 0; instructionCount < maxInstructionCount; instructionCount++) {
 
-            int buff = vmSubject.getCell(next); // Nacitamm dalsiu bunku jedinca
+            int buff = vmSubject.getCell(next); // Načítanie ďalšej bunky
 
-            next = ++next % Subject.numberOfCells; // Nastavime dalsiu bunku a ak dosiahne maxPocetBuniek tak prejde 0 vdaka modulu
+            next = ++next % Subject.numberOfCells; // Nastavenie ďalšej bunky
 
             int operation = buff & 192;       // 192 => 1100 0000
             int value = buff & 63;      // 63  => 0011 1111
 
             if (operation == inc) {
-                int cell = vmSubject.getCell(value); // ziskanie hodnotu bunky jedinca
+                int cell = vmSubject.getCell(value);
                 cell = ++cell % 256; // ak inkrementujeme 1111 1111 tak dostaneme 0000 0000
-                vmSubject.setCell(value, cell); // inkrementovanu hodnotu ulozime v jedincovi
+                vmSubject.setCell(value, cell);
             }
             else if (operation == dec) {
                 int cell = vmSubject.getCell(value);
@@ -46,11 +46,11 @@ public class VirtualMachine {
                 vmSubject.setCell(value, cell);
             }
             else if (operation == jump)
-                next = value; // V dalsom kroku programu sa nacita vybrana bunka
+                next = value; // V ďalšom kroku sa načíta vybraná bunka
 
             else {
                 int cell = vmSubject.getCell(value);
-                int move = cell & 3;
+                int move = cell & 3; // posledné 4 bity
 
                     Position position = switch (move) {
                         case 0 -> treasureFinder.moveTo(1, 0); // HORE
@@ -65,16 +65,12 @@ public class VirtualMachine {
                     }
                 }
 
-            // Ak hladač išiel mimo mapy
-            if (treasureFinder.isFailed())
+            // Ak hladač išiel mimo mapy alebo ak našiel všetky poklady
+            if (treasureFinder.isFailed() || treasureFinder.getTreasuresFound() == map.getTreasureCount())
                 break;
-
-            // Ak hladač našiel všetky poklady
-            if(treasureFinder.getTreasuresFound() == map.getTreasureCount()) {
-                break;
-            }
         }
 
+        // Vypočítanie fitness hodnoty
         int fitness = treasureFinder.getTreasuresFound()*1000 - treasureFinder.getStepCount();
         subject.setFitness(fitness);
         subject.setTreasuresFound(treasureFinder.getTreasuresFound());

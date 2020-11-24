@@ -42,7 +42,8 @@ public class Main {
          */
 
         Solve solve = new Solve();
-        solve.benchmark(treasureCount, columns, rows, treasureXpositions, treasureYpositions, startX, startY, maxGenerationCount, mutation);
+        // Funkcia slúži len na testovanie
+        // solve.benchmark(treasureCount, columns, rows, treasureXpositions, treasureYpositions, startX, startY, maxGenerationCount, mutation);
         solve.findSolution(treasureCount, columns, rows, treasureXpositions, treasureYpositions, startX, startY, maxGenerationCount, mutation);
     }
 }

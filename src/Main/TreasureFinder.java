@@ -17,12 +17,12 @@ public class TreasureFinder {
         this.reset();
     }
 
-    // Resetuje hladaca na zaciatocnu poziciu, resetuje pocet pokladov a vynuluje pocet krokov
+    // Resetuje hladača na zač. pozíciu, resetuje počet pokladov a vynuluje počet krokov
     public void reset() {
         map.resetMap();
         actualPosition.setCol(start.getCol());
         actualPosition.setRow(start.getRow());
-        treasureCount = map.isTreasure(start.getCol(), start.getRow()) ? 1 : 0; // Ak uz stoji na poklade tak zarata 1 poklad;
+        treasureCount = map.isTreasure(start.getCol(), start.getRow()) ? 1 : 0; // Ak už strojí na poklade tak zaráta 1 poklad;
         stepCount = 0;
         failed = false;
     }

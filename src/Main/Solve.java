@@ -27,7 +27,7 @@ public class Solve {
 
         System.out.println("Fitness:"+subject.getFitness());
         System.out.println("Poklady najdene:"+subject.getTreasuresFound());
-        System.out.println("Krokov:"+subject.getStepCount());
+        System.out.println("Pocet krokov:"+subject.getStepCount());
     }
     void benchmark(int treasuresCount, int columns, int rows, int [] treasureXpositions, int [] treasureYpositions, int startX, int startY, int maxGenerationCount, double mutation) throws CloneNotSupportedException {
 
